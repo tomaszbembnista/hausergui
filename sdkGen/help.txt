@@ -1,0 +1,10 @@
+API Desc: 
+http://localhost:8100/v2/api-docs
+
+Help:
+java -jar swagger-codegen-cli-3.0.22.jar --help
+
+Generation:
+java -jar swagger-codegen-cli-3.0.22.jar generate -i http://localhost:8100/v2/api-docs -l typescript-fetch -o ..\src\app\srvapi
+
+

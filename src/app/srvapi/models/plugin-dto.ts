@@ -11,6 +11,22 @@
  * https://github.com/swagger-api/swagger-codegen.git
  * Do not edit the class manually.
  */
-export * from "./api";
-export * from "./configuration";
-
+/**
+ * 
+ * @export
+ * @interface PluginDTO
+ */
+export interface PluginDTO {
+    /**
+     * 
+     * @type {string}
+     * @memberof PluginDTO
+     */
+    className?: any;
+    /**
+     * 
+     * @type {string}
+     * @memberof PluginDTO
+     */
+    displayName?: any;
+}

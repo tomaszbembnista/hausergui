@@ -1,9 +1,15 @@
 import React from 'react';
 import { Grommet, Card, CardHeader, CardBody } from 'grommet';
-import getSpaces from './app/ListSpaces';
+import { SpaceResourceApi } from "./app/srvapi";
+import { SpaceDTO } from "./app/srvapi/models";
+import { AxiosResponse } from "axios";
 
 function App() {
-  getSpaces();
+  let spa : SpaceResourceApi = new SpaceResourceApi();
+
+  spa.getSpacesUsingGET().then(spaces => {
+    
+  })
   
   return (
     <Grommet>

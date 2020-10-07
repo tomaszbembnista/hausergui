@@ -38,7 +38,7 @@ export const SpaceResourceApiAxiosParamCreator = function (configuration?: Confi
             }
             const localVarPath = `/api/spaces`;
             // use dummy base URL string because the URL constructor only accepts absolute URLs.
-            const localVarUrlObj = new URL(localVarPath, 'https://example.com');
+            const localVarUrlObj = new URL(localVarPath, 'https://localhost:8100');
             let baseOptions;
             if (configuration) {
                 baseOptions = configuration.baseOptions;
@@ -82,7 +82,7 @@ export const SpaceResourceApiAxiosParamCreator = function (configuration?: Confi
             const localVarPath = `/api/spaces/{id}`
                 .replace(`{${"id"}}`, encodeURIComponent(String(id)));
             // use dummy base URL string because the URL constructor only accepts absolute URLs.
-            const localVarUrlObj = new URL(localVarPath, 'https://example.com');
+            const localVarUrlObj = new URL(localVarPath, 'https://localhost:8100');
             let baseOptions;
             if (configuration) {
                 baseOptions = configuration.baseOptions;
@@ -122,7 +122,7 @@ export const SpaceResourceApiAxiosParamCreator = function (configuration?: Confi
             const localVarPath = `/api/spaces/{id}/devices`
                 .replace(`{${"id"}}`, encodeURIComponent(String(id)));
             // use dummy base URL string because the URL constructor only accepts absolute URLs.
-            const localVarUrlObj = new URL(localVarPath, 'https://example.com');
+            const localVarUrlObj = new URL(localVarPath, 'https://localhost:8100');
             let baseOptions;
             if (configuration) {
                 baseOptions = configuration.baseOptions;
@@ -162,7 +162,7 @@ export const SpaceResourceApiAxiosParamCreator = function (configuration?: Confi
             const localVarPath = `/api/spaces/{id}`
                 .replace(`{${"id"}}`, encodeURIComponent(String(id)));
             // use dummy base URL string because the URL constructor only accepts absolute URLs.
-            const localVarUrlObj = new URL(localVarPath, 'https://example.com');
+            const localVarUrlObj = new URL(localVarPath, 'https://localhost:8100');
             let baseOptions;
             if (configuration) {
                 baseOptions = configuration.baseOptions;
@@ -202,7 +202,7 @@ export const SpaceResourceApiAxiosParamCreator = function (configuration?: Confi
             const localVarPath = `/api/spaces/{id}/spaces`
                 .replace(`{${"id"}}`, encodeURIComponent(String(id)));
             // use dummy base URL string because the URL constructor only accepts absolute URLs.
-            const localVarUrlObj = new URL(localVarPath, 'https://example.com');
+            const localVarUrlObj = new URL(localVarPath, 'https://localhost:8100');
             let baseOptions;
             if (configuration) {
                 baseOptions = configuration.baseOptions;
@@ -236,7 +236,7 @@ export const SpaceResourceApiAxiosParamCreator = function (configuration?: Confi
         getSpacesUsingGET: async (options: any = {}): Promise<RequestArgs> => {
             const localVarPath = `/api/spaces`;
             // use dummy base URL string because the URL constructor only accepts absolute URLs.
-            const localVarUrlObj = new URL(localVarPath, 'https://example.com');
+            const localVarUrlObj = new URL(localVarPath, 'https://localhost:8100');
             let baseOptions;
             if (configuration) {
                 baseOptions = configuration.baseOptions;
@@ -275,7 +275,7 @@ export const SpaceResourceApiAxiosParamCreator = function (configuration?: Confi
             }
             const localVarPath = `/api/spaces`;
             // use dummy base URL string because the URL constructor only accepts absolute URLs.
-            const localVarUrlObj = new URL(localVarPath, 'https://example.com');
+            const localVarUrlObj = new URL(localVarPath, 'https://localhost:8100');
             let baseOptions;
             if (configuration) {
                 baseOptions = configuration.baseOptions;

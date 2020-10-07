@@ -1,25 +1,19 @@
 import React from 'react';
-import logo from './logo.svg';
-import './App.css';
+import { Grommet, Card, CardHeader, CardBody } from 'grommet';
+import getSpaces from './app/ListSpaces';
 
 function App() {
+  getSpaces();
+  
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.tsx</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+    <Grommet>
+      <Card width="small" background="light-1">
+        <CardHeader pad="medium">Spaces</CardHeader>
+        <CardBody>
+
+        </CardBody>
+      </Card>
+    </Grommet>
   );
 }
 

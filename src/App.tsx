@@ -8,7 +8,7 @@ function App() {
       <Card width="small" background="light-1">
         <CardHeader pad="medium">Spaces</CardHeader>
         <CardBody>
-          <ListSpaces prop={-1}></ListSpaces>
+          <ListSpaces parentSpaceId={-1}></ListSpaces>
         </CardBody>
       </Card>
     </Grommet>

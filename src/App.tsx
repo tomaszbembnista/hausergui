@@ -1,17 +1,18 @@
 import React from 'react';
-import { Grommet, Card, CardHeader, CardBody } from 'grommet';
 import ListSpaces from './app/ListSpaces';
+import Box from '@material-ui/core/Box';
 
 function App() {
   return (
-    <Grommet>
-      <Card width="small" background="light-1">
-        <CardHeader pad="medium">Spaces</CardHeader>
-        <CardBody>
-          <ListSpaces parentSpaceId={-1}></ListSpaces>
-        </CardBody>
-      </Card>
-    </Grommet>
+      <div>
+          <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700&display=swap" />
+          <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700&display=swap" />
+          <Box display="flex" justifyContent="center">
+            <Box alignSelf="center">
+              <ListSpaces parentSpaceId={-1}></ListSpaces>
+            </Box>
+          </Box>
+      </div>
   );
 }
 

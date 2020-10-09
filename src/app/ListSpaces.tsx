@@ -1,7 +1,8 @@
 import React from "react";
 import { SpaceResourceApi } from "./srvapi";
 import { SpaceDTO } from "./srvapi/models/space-dto";
-import { Button } from "grommet/components/Button";
+import { List, ListItem, ListItemText } from "@material-ui/core";
+import ArrowBackIosOutlinedIcon from '@material-ui/icons/ArrowBackIosOutlined';
 
 export default class ListSpaces extends React.Component<ListSpacesProps, ListSpacesState> {
     constructor(props: ListSpacesProps) {
@@ -37,10 +38,14 @@ export default class ListSpaces extends React.Component<ListSpacesProps, ListSpa
     render() {
         return (
             <div>
-                {this.state.spaceId > -1 && <Button onClick={() => this.buttonOnClickHandler()} label="back"></Button>}
-                {this.state.spaces.map(space => (
-                    <div key={space.id} onClick={() => this.getNextSpaces(space.id)}>id: {space.id}, name: {space.name}</div>
-                ))}
+                {this.state.spaceId > -1 && <ArrowBackIosOutlinedIcon onClick={() => this.buttonOnClickHandler()}>BACK</ArrowBackIosOutlinedIcon>}
+                <List>
+                    {this.state.spaces.map(space => (
+                        <ListItem button key={space.id} onClick={() => this.getNextSpaces(space.id)}>
+                            <ListItemText primary={space.name}></ListItemText>
+                        </ListItem>
+                    ))}
+                </List>
             </div>
         );
     }

@@ -11,10 +11,7 @@ export default class ListSpaces extends React.Component<ListSpacesProps, ListSpa
             spaces: []};
     }
     
-    public test: SpaceDTO = { };
-
     componentDidMount() {
-        this.test.id = "asd";
         this.getNextSpaces(this.props.parentSpaceId);
     }
 

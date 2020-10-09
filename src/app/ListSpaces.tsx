@@ -1,10 +1,12 @@
 import React from "react";
 import { SpaceResourceApi } from "./srvapi";
 import { SpaceDTO } from "./srvapi/models/space-dto";
-import { List, ListItem, ListItemText } from "@material-ui/core";
+import { Card, Typography, CardActions, Button } from "@material-ui/core";
 import ArrowBackIosOutlinedIcon from '@material-ui/icons/ArrowBackIosOutlined';
 
 export default class ListSpaces extends React.Component<ListSpacesProps, ListSpacesState> {
+    public currentSpaceName: any;
+
     constructor(props: ListSpacesProps) {
         super(props);
         this.state = {spaceId: this.props.parentSpaceId, 
@@ -13,13 +15,13 @@ export default class ListSpaces extends React.Component<ListSpacesProps, ListSpa
     }
     
     componentDidMount() {
-        this.getNextSpaces(this.props.parentSpaceId);
+        this.getSubspaces(this.props.parentSpaceId);
     }
 
-    getNextSpaces(parentSpaceId: number) {
+    getSubspaces(parentSpaceId: number) {
         let spacesResource: SpaceResourceApi = new SpaceResourceApi(); 
         spacesResource.getSpacesBelongingToSpaceUsingGET(parentSpaceId).then(spacesResult => {
-            var state: ListSpacesState = {spaceId: parentSpaceId, 
+            let state: ListSpacesState = {spaceId: parentSpaceId, 
                 ancestorsPath: this.state.ancestorsPath.concat(parentSpaceId),
                 spaces: spacesResult.data
             };
@@ -27,26 +29,45 @@ export default class ListSpaces extends React.Component<ListSpacesProps, ListSpa
         })
     }
 
+    getCurrentSpaceName() : any {
+        let spaceName;
+        let spacesResource: SpaceResourceApi = new SpaceResourceApi();
+        spacesResource.getSpaceUsingGET(this.state.spaceId).then(spaceResult => {
+            console.log(spaceResult.data);
+            spaceName = spaceResult.data.name;
+        })
+        return spaceName;
+    }
+
     buttonOnClickHandler() {
         if (this.state.ancestorsPath.length > 0) {
             let parentSpaceId: number = this.state.ancestorsPath.pop() as number;
             parentSpaceId = this.state.ancestorsPath.pop() as number;
-            this.getNextSpaces(parentSpaceId);
+            this.getSubspaces(parentSpaceId);
         }
     }
 
     render() {
         return (
-            <div>
-                {this.state.spaceId > -1 && <ArrowBackIosOutlinedIcon onClick={() => this.buttonOnClickHandler()}>BACK</ArrowBackIosOutlinedIcon>}
-                <List>
-                    {this.state.spaces.map(space => (
-                        <ListItem button key={space.id} onClick={() => this.getNextSpaces(space.id)}>
-                            <ListItemText primary={space.name}></ListItemText>
-                        </ListItem>
-                    ))}
-                </List>
-            </div>
+            <Card>
+                <Typography variant="h5" component="h2">
+                    Spaces
+                </Typography>
+                
+                {this.state.spaces.map(space => (
+                    <Card variant="outlined" key={space.id}>
+                        <Typography variant="h5" component="h2">
+                            {space.name}
+                        </Typography>
+                        <CardActions>
+                            <Button size="small" onClick={() => this.getSubspaces(space.id)}>Learn More</Button>
+                        </CardActions>
+                    </Card>
+                ))}
+                <CardActions>
+                    {this.state.spaceId > -1 && <ArrowBackIosOutlinedIcon onClick={() => this.buttonOnClickHandler()}>BACK</ArrowBackIosOutlinedIcon>}
+                </CardActions>
+            </Card>
         );
     }
 }

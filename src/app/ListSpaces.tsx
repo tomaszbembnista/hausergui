@@ -1,7 +1,7 @@
 import React from "react";
 import { SpaceResourceApi } from "./srvapi/apis";
 import { SpaceDTO } from "./srvapi/models/SpaceDTO";
-import { forkJoin, of } from 'rxjs';
+import { forkJoin } from 'rxjs';
 import { Card, Typography, CardActions, Button } from "@material-ui/core";
 import ArrowBackIosOutlinedIcon from '@material-ui/icons/ArrowBackIosOutlined';
 
@@ -9,8 +9,12 @@ export default class ListSpaces extends React.Component<ListSpacesProps, ListSpa
     constructor(props: ListSpacesProps) {
         super(props);
         this.state = {
-            spaceId: this.props.parentSpaceId,
-            spaceName: "Spaces",
+            spaceData: {
+                id: this.props.parentSpaceId,
+                name: "Spaces",
+                parentId: undefined,
+                slug: undefined
+            },
             ancestorsPath: [],
             spaces: []
         };
@@ -20,35 +24,61 @@ export default class ListSpaces extends React.Component<ListSpacesProps, ListSpa
         this.getSpaceDetails(this.props.parentSpaceId);
     }
 
-    getSpaceDetails(parentSpaceId: number) {
+    getSpaceDetails(spaceId: number) {
         let spacesResource: SpaceResourceApi = new SpaceResourceApi();
 
         let defaultSpace: SpaceDTO = {
-            id: parentSpaceId,
+            id: spaceId,
             name: "Spaces",
             parentId: undefined,
             slug: undefined
         }
 
-        let spaceObservable: Promise<SpaceDTO> = of(defaultSpace).toPromise();
+        let subspaces: number[] = this.state.spaces.map(space => space.id as number);
 
-        if (parentSpaceId !== -1) {
-            spaceObservable = spacesResource.getSpaceUsingGET({ id: parentSpaceId });
-        }
-
-        forkJoin([
-            spaceObservable,
-            spacesResource.getSpacesBelongingToSpaceUsingGET({ id: parentSpaceId })
-        ])
-            .subscribe((values) => {
+        if (spaceId === -1) {
+            spacesResource.getSpacesBelongingToSpaceUsingGET({ id: spaceId }).then((response) => {
                 let state: ListSpacesState = {
-                    spaceId: parentSpaceId,
-                    spaceName: values[0].name as string,
-                    ancestorsPath: this.state.ancestorsPath.concat(parentSpaceId),
+                    spaceData: defaultSpace,
+                    ancestorsPath: [-1],
+                    spaces: response
+                }
+                this.setState(state);
+            });
+        }
+        else if (subspaces.includes(spaceId)) {
+            spacesResource.getSpacesBelongingToSpaceUsingGET({ id: spaceId }).then((response) => {
+                let state: ListSpacesState = {
+                    spaceData: {
+                        id: spaceId,
+                        name: this.state.spaces[subspaces.indexOf(spaceId)].name,
+                        parentId: this.state.spaces[subspaces.indexOf(spaceId)].parentId,
+                        slug: this.state.spaces[subspaces.indexOf(spaceId)].slug
+                    },
+                    ancestorsPath: this.state.ancestorsPath.concat(spaceId),
+                    spaces: response
+                }
+                this.setState(state);
+            });
+        }
+        else {
+            forkJoin([
+                spacesResource.getSpaceUsingGET({ id: spaceId }),
+                spacesResource.getSpacesBelongingToSpaceUsingGET({ id: spaceId })
+            ]).subscribe((values) => {
+                let state: ListSpacesState = {
+                    spaceData: {
+                        id: spaceId,
+                        name: values[0].name,
+                        parentId: values[0].parentId,
+                        slug: values[0].slug
+                    },
+                    ancestorsPath: this.state.ancestorsPath.concat(spaceId),
                     spaces: values[1]
                 };
                 this.setState(state);
             });
+        }
     }
 
     backButtonOnClickHandler() {
@@ -63,7 +93,7 @@ export default class ListSpaces extends React.Component<ListSpacesProps, ListSpa
         return (
             <Card>
                 <Typography variant="h5" component="h2">
-                    {this.state.spaceName}
+                    {this.state.spaceData.name}
                 </Typography>
 
                 {this.state.spaces.map(space => (
@@ -72,12 +102,12 @@ export default class ListSpaces extends React.Component<ListSpacesProps, ListSpa
                             {space.name}
                         </Typography>
                         <CardActions>
-                            <Button size="small" onClick={() => this.getSpaceDetails(space.id as number)}>Learn More</Button>
+                            <Button size="small" onClick={() => this.getSpaceDetails(space.id as number)}>Enter</Button>
                         </CardActions>
                     </Card>
                 ))}
                 <CardActions>
-                    {this.state.spaceId > -1 && <ArrowBackIosOutlinedIcon onClick={() => this.backButtonOnClickHandler()}>BACK</ArrowBackIosOutlinedIcon>}
+                    {this.state.spaceData.id as number > -1 && <ArrowBackIosOutlinedIcon onClick={() => this.backButtonOnClickHandler()} />}
                 </CardActions>
             </Card>
         );
@@ -89,8 +119,7 @@ interface ListSpacesProps {
 }
 
 interface ListSpacesState {
-    spaceId: number;
-    spaceName: string;
+    spaceData: SpaceDTO;
     ancestorsPath: number[];
     spaces: SpaceDTO[];
 }

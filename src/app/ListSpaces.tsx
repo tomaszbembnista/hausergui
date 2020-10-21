@@ -1,7 +1,7 @@
 import React from "react";
 import { SpaceResourceApi } from "./srvapi/apis";
 import { SpaceDTO } from "./srvapi/models/SpaceDTO";
-import { forkJoin } from 'rxjs';
+import { forkJoin, of } from 'rxjs';
 import { Card, Typography, CardActions, Button } from "@material-ui/core";
 import ArrowBackIosOutlinedIcon from '@material-ui/icons/ArrowBackIosOutlined';
 
@@ -27,26 +27,9 @@ export default class ListSpaces extends React.Component<ListSpacesProps, ListSpa
     getSpaceDetails(spaceId: number) {
         let spacesResource: SpaceResourceApi = new SpaceResourceApi();
 
-        let defaultSpace: SpaceDTO = {
-            id: spaceId,
-            name: "Spaces",
-            parentId: undefined,
-            slug: undefined
-        }
-
         let subspaces: number[] = this.state.spaces.map(space => space.id as number);
 
-        if (spaceId === -1) {
-            spacesResource.getSpacesBelongingToSpaceUsingGET({ id: spaceId }).then((response) => {
-                let state: ListSpacesState = {
-                    spaceData: defaultSpace,
-                    ancestorsPath: [-1],
-                    spaces: response
-                }
-                this.setState(state);
-            });
-        }
-        else if (subspaces.includes(spaceId)) {
+        if (subspaces.includes(spaceId)) {
             spacesResource.getSpacesBelongingToSpaceUsingGET({ id: spaceId }).then((response) => {
                 let state: ListSpacesState = {
                     spaceData: {
@@ -62,8 +45,21 @@ export default class ListSpaces extends React.Component<ListSpacesProps, ListSpa
             });
         }
         else {
+            let defaultSpace: SpaceDTO = {
+                id: spaceId,
+                name: "Spaces",
+                parentId: undefined,
+                slug: undefined
+            }
+
+            let spaceObservable: Promise<SpaceDTO> = of(defaultSpace).toPromise();
+
+            if (spaceId !== -1) {
+                spaceObservable = spacesResource.getSpaceUsingGET({ id: spaceId });
+            }
+
             forkJoin([
-                spacesResource.getSpaceUsingGET({ id: spaceId }),
+                spaceObservable,
                 spacesResource.getSpacesBelongingToSpaceUsingGET({ id: spaceId })
             ]).subscribe((values) => {
                 let state: ListSpacesState = {

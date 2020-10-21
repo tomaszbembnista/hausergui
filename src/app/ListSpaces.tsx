@@ -26,12 +26,14 @@ export default class ListSpaces extends React.Component<ListSpacesProps, ListSpa
     getSpaceDetails(spaceId: number) {
         let spacesResource: SpaceResourceApi = new SpaceResourceApi();
 
-        let subspaces: number[] = this.state.spaces.map(space => space.id as number);
+        let subspace: SpaceDTO | undefined = this.state.spaces.find(space => {
+            return space.id === spaceId;
+        });
 
-        if (subspaces.includes(spaceId)) {
+        if (subspace) {
             spacesResource.getSpacesBelongingToSpaceUsingGET({ id: spaceId }).then((response) => {
                 let state: ListSpacesState = {
-                    spaceData: this.state.spaces[subspaces.indexOf(spaceId)],
+                    spaceData: subspace as SpaceDTO,
                     ancestorsPath: this.state.ancestorsPath.concat(spaceId),
                     spaces: response
                 }

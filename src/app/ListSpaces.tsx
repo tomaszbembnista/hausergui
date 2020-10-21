@@ -39,11 +39,11 @@ export default class ListSpaces extends React.Component<ListSpacesProps, ListSpa
 
         let spaceObservable: Promise<SpaceDTO> = of(defaultSpace).toPromise();
 
-        if (spaceId !== -1) {
-            spaceObservable = spacesResource.getSpaceUsingGET({ id: spaceId });
-        }
-        else if (subspace) {
+        if (subspace) {
             spaceObservable = of(subspace).toPromise();
+        }
+        else if (spaceId !== -1) {
+            spaceObservable = spacesResource.getSpaceUsingGET({ id: spaceId });
         }
 
         forkJoin([

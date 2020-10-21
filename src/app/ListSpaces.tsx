@@ -1,8 +1,7 @@
 import React from "react";
-import { SpaceResourceApi } from "./srvapi/apis";
-import { SpaceDTO } from "./srvapi/models/SpaceDTO";
+import { SpaceResourceApi, SpaceDTO } from "./srvapi/index";
 import { forkJoin, of } from 'rxjs';
-import { Card, Typography, CardActions, Button } from "@material-ui/core";
+import { Card, Typography, CardActions, Button, CardHeader, CardContent } from "@material-ui/core";
 import ArrowBackIosOutlinedIcon from '@material-ui/icons/ArrowBackIosOutlined';
 
 export default class ListSpaces extends React.Component<ListSpacesProps, ListSpacesState> {
@@ -32,12 +31,7 @@ export default class ListSpaces extends React.Component<ListSpacesProps, ListSpa
         if (subspaces.includes(spaceId)) {
             spacesResource.getSpacesBelongingToSpaceUsingGET({ id: spaceId }).then((response) => {
                 let state: ListSpacesState = {
-                    spaceData: {
-                        id: spaceId,
-                        name: this.state.spaces[subspaces.indexOf(spaceId)].name,
-                        parentId: this.state.spaces[subspaces.indexOf(spaceId)].parentId,
-                        slug: this.state.spaces[subspaces.indexOf(spaceId)].slug
-                    },
+                    spaceData: this.state.spaces[subspaces.indexOf(spaceId)],
                     ancestorsPath: this.state.ancestorsPath.concat(spaceId),
                     spaces: response
                 }
@@ -88,23 +82,26 @@ export default class ListSpaces extends React.Component<ListSpacesProps, ListSpa
     render() {
         return (
             <Card>
-                <Typography variant="h5" component="h2">
-                    {this.state.spaceData.name}
-                </Typography>
-
-                {this.state.spaces.map(space => (
-                    <Card variant="outlined" key={space.id}>
-                        <Typography variant="h5" component="h2">
-                            {space.name}
-                        </Typography>
-                        <CardActions>
-                            <Button size="small" onClick={() => this.getSpaceDetails(space.id as number)}>Enter</Button>
-                        </CardActions>
-                    </Card>
-                ))}
-                <CardActions>
-                    {this.state.spaceData.id as number > -1 && <ArrowBackIosOutlinedIcon onClick={() => this.backButtonOnClickHandler()} />}
-                </CardActions>
+                <CardHeader
+                    action={
+                        this.state.spaceData.id as number > -1 && <ArrowBackIosOutlinedIcon onClick={() => this.backButtonOnClickHandler()} />
+                    }
+                    title={
+                        this.state.spaceData.name
+                    }
+                />
+                <CardContent>
+                    {this.state.spaces.map(space => (
+                        <Card variant="outlined" key={space.id} className="subcard">
+                            <Typography variant="h5" component="h2">
+                                {space.name}
+                            </Typography>
+                            <CardActions>
+                                <Button size="small" onClick={() => this.getSpaceDetails(space.id as number)}>Enter</Button>
+                            </CardActions>
+                        </Card>
+                    ))}
+                </CardContent>
             </Card>
         );
     }

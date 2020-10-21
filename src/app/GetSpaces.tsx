@@ -4,8 +4,8 @@ import { forkJoin, of } from 'rxjs';
 import { Card, Typography, CardActions, Button, CardHeader, CardContent } from "@material-ui/core";
 import ArrowBackIosOutlinedIcon from '@material-ui/icons/ArrowBackIosOutlined';
 
-export default class GetSpaces extends React.Component<ListSpacesProps, ListSpacesState> {
-    constructor(props: ListSpacesProps) {
+export default class GetSpaces extends React.Component<GetSpacesProps, GetSpacesState> {
+    constructor(props: GetSpacesProps) {
         super(props);
         this.state = {
             spaceData: {
@@ -50,7 +50,7 @@ export default class GetSpaces extends React.Component<ListSpacesProps, ListSpac
             spaceObservable,
             spacesResource.getSpacesBelongingToSpaceUsingGET({ id: spaceId })
         ]).subscribe((values) => {
-            let state: ListSpacesState = {
+            let state: GetSpacesState = {
                 spaceData: {
                     id: spaceId,
                     name: values[0].name,
@@ -100,11 +100,11 @@ export default class GetSpaces extends React.Component<ListSpacesProps, ListSpac
     }
 }
 
-interface ListSpacesProps {
+interface GetSpacesProps {
     parentSpaceId: number;
 }
 
-interface ListSpacesState {
+interface GetSpacesState {
     spaceData: SpaceDTO;
     ancestorsPath: number[];
     spaces: SpaceDTO[];

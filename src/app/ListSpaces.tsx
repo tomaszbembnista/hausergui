@@ -30,47 +30,38 @@ export default class ListSpaces extends React.Component<ListSpacesProps, ListSpa
             return space.id === spaceId;
         });
 
-        if (subspace) {
-            spacesResource.getSpacesBelongingToSpaceUsingGET({ id: spaceId }).then((response) => {
-                let state: ListSpacesState = {
-                    spaceData: subspace as SpaceDTO,
-                    ancestorsPath: this.state.ancestorsPath.concat(spaceId),
-                    spaces: response
-                }
-                this.setState(state);
-            });
+        let defaultSpace: SpaceDTO = {
+            id: spaceId,
+            name: "Spaces",
+            parentId: undefined,
+            slug: undefined
         }
-        else {
-            let defaultSpace: SpaceDTO = {
-                id: spaceId,
-                name: "Spaces",
-                parentId: undefined,
-                slug: undefined
-            }
 
-            let spaceObservable: Promise<SpaceDTO> = of(defaultSpace).toPromise();
+        let spaceObservable: Promise<SpaceDTO> = of(defaultSpace).toPromise();
 
-            if (spaceId !== -1) {
-                spaceObservable = spacesResource.getSpaceUsingGET({ id: spaceId });
-            }
-
-            forkJoin([
-                spaceObservable,
-                spacesResource.getSpacesBelongingToSpaceUsingGET({ id: spaceId })
-            ]).subscribe((values) => {
-                let state: ListSpacesState = {
-                    spaceData: {
-                        id: spaceId,
-                        name: values[0].name,
-                        parentId: values[0].parentId,
-                        slug: values[0].slug
-                    },
-                    ancestorsPath: this.state.ancestorsPath.concat(spaceId),
-                    spaces: values[1]
-                };
-                this.setState(state);
-            });
+        if (spaceId !== -1) {
+            spaceObservable = spacesResource.getSpaceUsingGET({ id: spaceId });
         }
+        else if (subspace) {
+            spaceObservable = of(subspace).toPromise();
+        }
+
+        forkJoin([
+            spaceObservable,
+            spacesResource.getSpacesBelongingToSpaceUsingGET({ id: spaceId })
+        ]).subscribe((values) => {
+            let state: ListSpacesState = {
+                spaceData: {
+                    id: spaceId,
+                    name: values[0].name,
+                    parentId: values[0].parentId,
+                    slug: values[0].slug
+                },
+                ancestorsPath: this.state.ancestorsPath.concat(spaceId),
+                spaces: values[1]
+            };
+            this.setState(state);
+        });
     }
 
     backButtonOnClickHandler() {

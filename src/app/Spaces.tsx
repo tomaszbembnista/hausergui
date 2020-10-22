@@ -3,8 +3,9 @@ import { SpaceResourceApi, SpaceDTO } from "./srvapi/index";
 import { forkJoin, of } from 'rxjs';
 import { Card, Typography, CardActions, Button, CardHeader, CardContent } from "@material-ui/core";
 import ArrowBackIosOutlinedIcon from '@material-ui/icons/ArrowBackIosOutlined';
+import Devices from "./Devices";
 
-export default class GetSpaces extends React.Component<GetSpacesProps, GetSpacesState> {
+export default class Spaces extends React.Component<GetSpacesProps, GetSpacesState> {
     constructor(props: GetSpacesProps) {
         super(props);
         this.state = {
@@ -84,16 +85,21 @@ export default class GetSpaces extends React.Component<GetSpacesProps, GetSpaces
                     }
                 />
                 <CardContent>
-                    {this.state.spaces.map(space => (
-                        <Card variant="outlined" key={space.id} className="subcard">
-                            <Typography variant="h5" component="h2">
-                                {space.name}
-                            </Typography>
-                            <CardActions>
-                                <Button size="small" onClick={() => this.getSpaceDetails(space.id as number)}>Enter</Button>
-                            </CardActions>
-                        </Card>
-                    ))}
+                    {
+                        this.state.spaces.map(space => (
+                            <Card variant="outlined" key={space.id} className="subcard">
+                                <Typography variant="h5" component="h2">
+                                    {space.name}
+                                </Typography>
+                                <CardActions>
+                                    <Button size="small" onClick={() => this.getSpaceDetails(space.id as number)}>Enter</Button>
+                                </CardActions>
+                            </Card>
+                        ))
+                    }
+                    {
+                        <Devices spaceId={this.state.spaceData.id as number}></Devices>
+                    }
                 </CardContent>
             </>
         )

@@ -1,12 +1,14 @@
 import React from 'react';
-import AppContent from './app/AppContent';
-import Box from '@material-ui/core/Box';
+import Spaces from './app/Spaces';
+import { Box, Card } from '@material-ui/core/';
 
 function App() {
 	return (
 		<Box display="flex" justifyContent="center" alignItems="center">
 			<Box>
-				<AppContent parentSpaceId={-1}></AppContent>
+				<Card>
+					<Spaces parentSpaceId={-1} />
+				</Card>
 			</Box>
 		</Box>
 	);

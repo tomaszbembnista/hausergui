@@ -1,12 +1,43 @@
 import React from "react";
 import { SpaceResourceApi, SpaceDTO } from "./srvapi/index";
 import { forkJoin, of } from 'rxjs';
-import { Card, Typography, CardActions, Button, CardHeader, CardContent } from "@material-ui/core";
-import ArrowBackIosOutlinedIcon from '@material-ui/icons/ArrowBackIosOutlined';
 import Devices from "./Devices";
+import {
+    Card, Typography, CardActions, Button, CardHeader,
+    CardContent, Accordion, AccordionSummary, AccordionDetails,
+    Theme, createStyles, WithStyles, withStyles
+} from "@material-ui/core";
+import ArrowBackIosOutlinedIcon from '@material-ui/icons/ArrowBackIosOutlined';
+import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
 
-export default class Spaces extends React.Component<GetSpacesProps, GetSpacesState> {
-    constructor(props: GetSpacesProps) {
+const styles = (theme: Theme) =>
+    createStyles({
+        cardroot: {
+            minWidth: 355
+        },
+        heading: {
+            fontSize: theme.typography.pxToRem(15),
+            flexBasis: '40%',
+            flexShrink: 0,
+        },
+        secondaryHeading: {
+            fontSize: theme.typography.pxToRem(15),
+            color: theme.palette.text.secondary,
+        },
+    });
+
+interface SpacesProps extends WithStyles<typeof styles> {
+    parentSpaceId: number;
+}
+
+interface SpacesState {
+    spaceData: SpaceDTO;
+    ancestorsPath: number[];
+    spaces: SpaceDTO[];
+}
+
+class Spaces extends React.Component<SpacesProps, SpacesState> {
+    constructor(props: SpacesProps) {
         super(props);
         this.state = {
             spaceData: {
@@ -51,7 +82,7 @@ export default class Spaces extends React.Component<GetSpacesProps, GetSpacesSta
             spaceObservable,
             spacesResource.getSpacesBelongingToSpaceUsingGET({ id: spaceId })
         ]).subscribe((values) => {
-            let state: GetSpacesState = {
+            let state: SpacesState = {
                 spaceData: {
                     id: spaceId,
                     name: values[0].name,
@@ -84,34 +115,49 @@ export default class Spaces extends React.Component<GetSpacesProps, GetSpacesSta
                         this.state.spaceData.name
                     }
                 />
-                <CardContent>
-                    {
-                        this.state.spaces.map(space => (
-                            <Card variant="outlined" key={space.id} className="subcard">
-                                <Typography variant="h5" component="h2">
-                                    {space.name}
-                                </Typography>
-                                <CardActions>
-                                    <Button size="small" onClick={() => this.getSpaceDetails(space.id as number)}>Enter</Button>
-                                </CardActions>
-                            </Card>
-                        ))
-                    }
-                    {
-                        <Devices spaceId={this.state.spaceData.id as number}></Devices>
-                    }
+                <CardContent className={this.props.classes.cardroot}>
+                    <Accordion>
+                        <AccordionSummary
+                            expandIcon={<ExpandMoreIcon />}
+                            aria-controls="panel1bh-content"
+                            id="panel1bh-header"
+                        >
+                            <Typography className={this.props.classes.heading}>Subspaces </Typography>
+                            <Typography className={this.props.classes.secondaryHeading}>{this.state.spaces.length}</Typography>
+                        </AccordionSummary>
+                        <AccordionDetails>
+                            {
+                                this.state.spaces.map(space => (
+                                    <Card variant="outlined" key={space.id} className="subcard">
+                                        <Typography variant="h5" component="h2">
+                                            {space.name}
+                                        </Typography>
+                                        <CardActions>
+                                            <Button size="small" onClick={() => this.getSpaceDetails(space.id as number)}>Enter</Button>
+                                        </CardActions>
+                                    </Card>
+                                ))
+                            }
+                        </AccordionDetails>
+                    </Accordion>
+                    <Accordion>
+                        <AccordionSummary
+                            expandIcon={<ExpandMoreIcon />}
+                            aria-controls="panel2bh-content"
+                            id="panel2bh-header"
+                        >
+                            <Typography className={this.props.classes.heading}>Devices</Typography>
+                        </AccordionSummary>
+                        <AccordionDetails>
+                            {
+                                <Devices spaceId={this.state.spaceData.id as number}></Devices>
+                            }
+                        </AccordionDetails>
+                    </Accordion>
                 </CardContent>
             </>
         )
     }
 }
 
-interface GetSpacesProps {
-    parentSpaceId: number;
-}
-
-interface GetSpacesState {
-    spaceData: SpaceDTO;
-    ancestorsPath: number[];
-    spaces: SpaceDTO[];
-}
+export default withStyles(styles, { withTheme: true })(Spaces);

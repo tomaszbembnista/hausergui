@@ -1,7 +1,11 @@
 import React from "react";
 import { SpaceResourceApi, DeviceDTO } from "./srvapi";
+import { withStyles, WithStyles, createStyles, Theme } from '@material-ui/core/styles';
 
-interface DevicesProps {
+const styles = (theme: Theme) => createStyles({
+});
+
+interface DevicesProps extends WithStyles<typeof styles> {
     spaceId: number;
 };
 
@@ -35,19 +39,16 @@ class Devices extends React.Component<DevicesProps, DevicesState> {
     render() {
         return (
             <>
-                <ul>
-                    {
-                        this.state.devices.map(device => (
-                            <li key={device.id}>
-                                {device.name}
-                                {device.slug}
-                            </li>
-                        ))
-                    }
-                </ul>
+                {
+                    this.state.devices.map(device => (
+                        <p key={device.id}>
+                            {device.slug}
+                        </p>
+                    ))
+                }
             </>
         )
     }
 }
 
-export default Devices;
+export default withStyles(styles, { withTheme: true })(Devices);

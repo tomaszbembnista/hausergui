@@ -12,17 +12,20 @@ interface DevicesState {
 class Devices extends React.Component<DevicesProps, DevicesState> {
     constructor(props: DevicesProps) {
         super(props);
-        this.state = {
-            devices: []
-        };
+        this.state = { devices: [] };
     }
 
     componentDidMount() {
         this.getDevices(this.props.spaceId);
     }
 
+    componentDidUpdate(prevProps: DevicesProps) {
+        if (prevProps.spaceId !== this.props.spaceId) {
+            this.getDevices(this.props.spaceId);
+        }
+    }
+
     getDevices(spaceId: number) {
-        console.log("getDevices");
         let spacesResource: SpaceResourceApi = new SpaceResourceApi();
         spacesResource.getDevicesBelongingToSpaceUsingGET({ id: spaceId }).then(values => {
             this.setState({ devices: values });
@@ -35,8 +38,9 @@ class Devices extends React.Component<DevicesProps, DevicesState> {
                 <ul>
                     {
                         this.state.devices.map(device => (
-                            <li>
+                            <li key={device.id}>
                                 {device.name}
+                                {device.slug}
                             </li>
                         ))
                     }

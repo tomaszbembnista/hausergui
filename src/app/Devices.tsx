@@ -73,13 +73,6 @@ class Devices extends React.Component<DevicesProps, DevicesState> {
                                 <Typography className={this.props.classes.accordionSecondaryHeading}>{this.state.devices.length}</Typography>
                             </AccordionSummary>
                             <AccordionDetails>
-                                {
-                                    this.state.devices.map(device => (
-                                        <p key={device.id}>
-                                            {device.slug}
-                                        </p>
-                                    ))
-                                }
                             </AccordionDetails>
                         </Accordion>
                 }

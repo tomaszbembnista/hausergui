@@ -104,30 +104,47 @@ class Spaces extends React.Component<SpacesProps, SpacesState> {
                     </Toolbar>
                 </AppBar>
                 <CardContent className={this.props.classes.cardRoot}>
-                    <Accordion>
-                        <AccordionSummary
-                            expandIcon={<ExpandMoreIcon />}
-                            aria-controls="panel1bh-content"
-                            id="panel1bh-header"
-                        >
-                            <Typography className={this.props.classes.accordionHeading}>Subspaces </Typography>
-                            <Typography className={this.props.classes.accordionSecondaryHeading}>{this.state.spaces.length}</Typography>
-                        </AccordionSummary>
-                        <AccordionDetails>
-                            {
-                                this.state.spaces.map(space => (
-                                    <Card variant="outlined" key={space.id} className={this.props.classes.spaceCard}>
-                                        <Typography variant="h5" component="h2">
-                                            {space.name}
-                                        </Typography>
-                                        <CardActions>
-                                            <Button size="small" onClick={() => this.getSpaceDetails(space.id as number)}>Enter</Button>
-                                        </CardActions>
-                                    </Card>
-                                ))
-                            }
-                        </AccordionDetails>
-                    </Accordion>
+                    {
+                        this.state.spaces.length > 0 ?
+                            <Accordion>
+                                <AccordionSummary
+                                    expandIcon={<ExpandMoreIcon />}
+                                    aria-controls="panel1bh-content"
+                                    id="panel1bh-header"
+                                >
+                                    <Typography className={this.props.classes.accordionHeading}>Subspaces </Typography>
+                                    <Typography className={this.props.classes.accordionSecondaryHeading}>{this.state.spaces.length}</Typography>
+                                </AccordionSummary>
+                                <AccordionDetails>
+                                    {
+                                        this.state.spaces.map(space => (
+                                            <Card variant="outlined" key={space.id} className={this.props.classes.spaceCard}>
+                                                <Typography variant="h5" component="h2">
+                                                    {space.name}
+                                                </Typography>
+                                                <CardActions>
+                                                    <Button size="small" onClick={() => this.getSpaceDetails(space.id as number)}>Enter</Button>
+                                                </CardActions>
+                                            </Card>
+                                        ))
+                                    }
+                                </AccordionDetails>
+                            </Accordion>
+                            :
+                            <Accordion disabled>
+                                <AccordionSummary
+                                    expandIcon={<ExpandMoreIcon />}
+                                    aria-controls="panel1bh-content"
+                                    id="panel1bh-header"
+                                >
+                                    <Typography className={this.props.classes.accordionHeading}>Subspaces </Typography>
+                                    <Typography className={this.props.classes.accordionSecondaryHeading}>{this.state.spaces.length}</Typography>
+                                </AccordionSummary>
+                                <AccordionDetails>
+                                </AccordionDetails>
+                            </Accordion>
+                    }
+
                     <Devices spaceId={this.state.spaceData.id as number}></Devices>
                 </CardContent>
             </>

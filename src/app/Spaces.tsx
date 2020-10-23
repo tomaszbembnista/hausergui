@@ -5,26 +5,11 @@ import Devices from "./Devices";
 import {
     Card, Typography, CardActions, Button, CardHeader,
     CardContent, Accordion, AccordionSummary, AccordionDetails,
-    Theme, createStyles, WithStyles, withStyles
+    WithStyles, withStyles
 } from "@material-ui/core";
 import ArrowBackIosOutlinedIcon from '@material-ui/icons/ArrowBackIosOutlined';
 import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
-
-const styles = (theme: Theme) =>
-    createStyles({
-        cardroot: {
-            minWidth: 355
-        },
-        heading: {
-            fontSize: theme.typography.pxToRem(15),
-            flexBasis: '40%',
-            flexShrink: 0,
-        },
-        secondaryHeading: {
-            fontSize: theme.typography.pxToRem(15),
-            color: theme.palette.text.secondary,
-        },
-    });
+import styles from "./Styles";
 
 interface SpacesProps extends WithStyles<typeof styles> {
     parentSpaceId: number;
@@ -140,20 +125,7 @@ class Spaces extends React.Component<SpacesProps, SpacesState> {
                             }
                         </AccordionDetails>
                     </Accordion>
-                    <Accordion>
-                        <AccordionSummary
-                            expandIcon={<ExpandMoreIcon />}
-                            aria-controls="panel2bh-content"
-                            id="panel2bh-header"
-                        >
-                            <Typography className={this.props.classes.heading}>Devices</Typography>
-                        </AccordionSummary>
-                        <AccordionDetails>
-                            {
-                                <Devices spaceId={this.state.spaceData.id as number}></Devices>
-                            }
-                        </AccordionDetails>
-                    </Accordion>
+                    <Devices spaceId={this.state.spaceData.id as number}></Devices>
                 </CardContent>
             </>
         )

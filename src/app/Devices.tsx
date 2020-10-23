@@ -49,8 +49,8 @@ class Devices extends React.Component<DevicesProps, DevicesState> {
                                 aria-controls="panel2bh-content"
                                 id="panel2bh-header"
                             >
-                                <Typography className={this.props.classes.heading}>Devices</Typography>
-                                <Typography className={this.props.classes.secondaryHeading}>{this.state.devices.length}</Typography>
+                                <Typography className={this.props.classes.accordionHeading}>Devices</Typography>
+                                <Typography className={this.props.classes.accordionSecondaryHeading}>{this.state.devices.length}</Typography>
                             </AccordionSummary>
                             <AccordionDetails>
                                 {
@@ -69,8 +69,8 @@ class Devices extends React.Component<DevicesProps, DevicesState> {
                                 aria-controls="panel2bh-content"
                                 id="panel2bh-header"
                             >
-                                <Typography className={this.props.classes.heading}>Devices</Typography>
-                                <Typography className={this.props.classes.secondaryHeading}>{this.state.devices.length}</Typography>
+                                <Typography className={this.props.classes.accordionHeading}>Devices</Typography>
+                                <Typography className={this.props.classes.accordionSecondaryHeading}>{this.state.devices.length}</Typography>
                             </AccordionSummary>
                             <AccordionDetails>
                                 {

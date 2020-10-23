@@ -3,9 +3,9 @@ import { SpaceResourceApi, SpaceDTO } from "./srvapi/index";
 import { forkJoin, of } from 'rxjs';
 import Devices from "./Devices";
 import {
-    Card, Typography, CardActions, Button, CardHeader,
-    CardContent, Accordion, AccordionSummary, AccordionDetails,
-    WithStyles, withStyles
+    Card, Typography, CardActions, Button, CardContent,
+    Accordion, AccordionSummary, AccordionDetails,
+    WithStyles, withStyles, AppBar, Toolbar
 } from "@material-ui/core";
 import ArrowBackIosOutlinedIcon from '@material-ui/icons/ArrowBackIosOutlined';
 import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
@@ -92,28 +92,31 @@ class Spaces extends React.Component<SpacesProps, SpacesState> {
     render() {
         return (
             <>
-                <CardHeader
-                    action={
-                        this.state.spaceData.id as number > -1 && <ArrowBackIosOutlinedIcon onClick={() => this.backButtonOnClickHandler()} />
-                    }
-                    title={
-                        this.state.spaceData.name
-                    }
-                />
-                <CardContent className={this.props.classes.cardroot}>
+                <AppBar position="static">
+                    <Toolbar>
+                        <Typography variant="h6" className={this.props.classes.toolbarTitle}>
+                            {this.state.spaceData.name}
+                        </Typography>
+                        {
+                            this.state.spaceData.id as number > -1 &&
+                            <ArrowBackIosOutlinedIcon className={this.props.classes.toolbarButton} onClick={() => this.backButtonOnClickHandler()} />
+                        }
+                    </Toolbar>
+                </AppBar>
+                <CardContent className={this.props.classes.cardRoot}>
                     <Accordion>
                         <AccordionSummary
                             expandIcon={<ExpandMoreIcon />}
                             aria-controls="panel1bh-content"
                             id="panel1bh-header"
                         >
-                            <Typography className={this.props.classes.heading}>Subspaces </Typography>
-                            <Typography className={this.props.classes.secondaryHeading}>{this.state.spaces.length}</Typography>
+                            <Typography className={this.props.classes.accordionHeading}>Subspaces </Typography>
+                            <Typography className={this.props.classes.accordionSecondaryHeading}>{this.state.spaces.length}</Typography>
                         </AccordionSummary>
                         <AccordionDetails>
                             {
                                 this.state.spaces.map(space => (
-                                    <Card variant="outlined" key={space.id} className="subcard">
+                                    <Card variant="outlined" key={space.id} className={this.props.classes.spaceCard}>
                                         <Typography variant="h5" component="h2">
                                             {space.name}
                                         </Typography>

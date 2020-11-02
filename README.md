@@ -11,8 +11,8 @@
 Use `npm run build` to build the app and then deploy it using one of possible [deploying methods](https://create-react-app.dev/docs/deployment/).
 
 ## Debugging
-### Firefox
+### Firefox/Chrome/Chromium
 Press F12 and then choose "Debugger". Click on "Sources" tab in the left panel and head to project local source files. After opening desired file you can set breakpoints etc. 
 
-### Chrome
+### Opera
 Press cmd + option + J (Mac)/ ctrl + shift + J (Windows/Linux) and then choose "Sources". In the left panel you'll have source files. 

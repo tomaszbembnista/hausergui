@@ -13,12 +13,16 @@ interface DevicesProps extends WithStyles<typeof styles> {
 
 interface DevicesState {
     devices: DeviceDTO[];
+    accordion: string;
 };
 
 class Devices extends React.Component<DevicesProps, DevicesState> {
     constructor(props: DevicesProps) {
         super(props);
-        this.state = { devices: [] };
+        this.state = {
+            devices: [],
+            accordion: "",
+        };
     }
 
     componentDidMount() {
@@ -38,44 +42,39 @@ class Devices extends React.Component<DevicesProps, DevicesState> {
         })
     }
 
+    expandAccordion = (panel: string) => (event: React.ChangeEvent<{}>, isExpanded: boolean) => {
+        if (this.state.devices.length > 0) {
+            if (isExpanded) {
+                this.setState({ accordion: panel })
+            }
+            else {
+                this.setState({ accordion: "" })
+            }
+        }
+    }
+
     render() {
         return (
             <>
-                {
-                    this.state.devices.length > 0 ?
-                        <Accordion>
-                            <AccordionSummary
-                                expandIcon={<ExpandMoreIcon />}
-                                aria-controls="panel2bh-content"
-                                id="panel2bh-header"
-                            >
-                                <Typography className={this.props.classes.accordionHeading}>Devices</Typography>
-                                <Typography className={this.props.classes.accordionSecondaryHeading}>{this.state.devices.length}</Typography>
-                            </AccordionSummary>
-                            <AccordionDetails>
-                                {
-                                    this.state.devices.map(device => (
-                                        <p key={device.id}>
-                                            {device.slug}
-                                        </p>
-                                    ))
-                                }
-                            </AccordionDetails>
-                        </Accordion>
-                        :
-                        <Accordion disabled>
-                            <AccordionSummary
-                                expandIcon={<ExpandMoreIcon />}
-                                aria-controls="panel2bh-content"
-                                id="panel2bh-header"
-                            >
-                                <Typography className={this.props.classes.accordionHeading}>Devices</Typography>
-                                <Typography className={this.props.classes.accordionSecondaryHeading}>{this.state.devices.length}</Typography>
-                            </AccordionSummary>
-                            <AccordionDetails>
-                            </AccordionDetails>
-                        </Accordion>
-                }
+                <Accordion expanded={this.state.accordion === "panel1"} onChange={this.expandAccordion("panel1")}>
+                    <AccordionSummary
+                        expandIcon={<ExpandMoreIcon />}
+                        aria-controls="panel2bh-content"
+                        id="panel2bh-header"
+                    >
+                        <Typography className={this.props.classes.accordionHeading}>Devices</Typography>
+                        <Typography className={this.props.classes.accordionSecondaryHeading}>{this.state.devices.length}</Typography>
+                    </AccordionSummary>
+                    <AccordionDetails>
+                        {
+                            this.state.devices.map(device => (
+                                <p key={device.id}>
+                                    {device.slug}
+                                </p>
+                            ))
+                        }
+                    </AccordionDetails>
+                </Accordion>
             </>
         )
     }

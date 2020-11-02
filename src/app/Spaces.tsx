@@ -19,6 +19,7 @@ interface SpacesState {
     spaceData: SpaceDTO;
     ancestorsPath: number[];
     spaces: SpaceDTO[];
+    accordionExpanded: boolean;
 }
 
 class Spaces extends React.Component<SpacesProps, SpacesState> {
@@ -32,12 +33,19 @@ class Spaces extends React.Component<SpacesProps, SpacesState> {
                 slug: undefined
             },
             ancestorsPath: [],
-            spaces: []
+            spaces: [],
+            accordionExpanded: false
         };
     }
 
     componentDidMount() {
         this.getSpaceDetails(this.props.parentSpaceId);
+    }
+
+    componentDidUpdate(prevProps: SpacesProps, prevState: SpacesState) {
+        if (prevState.spaceData.id !== this.state.spaceData.id) {
+            this.setState({ accordionExpanded: false });
+        }
     }
 
     getSpaceDetails(spaceId: number) {
@@ -67,17 +75,17 @@ class Spaces extends React.Component<SpacesProps, SpacesState> {
             spaceObservable,
             spacesResource.getSpacesBelongingToSpaceUsingGET({ id: spaceId })
         ]).subscribe((values) => {
-            let state: SpacesState = {
-                spaceData: {
-                    id: spaceId,
-                    name: values[0].name,
-                    parentId: values[0].parentId,
-                    slug: values[0].slug
-                },
+            let newSpaceData: SpaceDTO = {
+                id: spaceId,
+                name: values[0].name,
+                parentId: values[0].parentId,
+                slug: values[0].slug
+            }
+            this.setState({
+                spaceData: newSpaceData,
                 ancestorsPath: this.state.ancestorsPath.concat(spaceId),
                 spaces: values[1]
-            };
-            this.setState(state);
+            });
         });
     }
 
@@ -86,6 +94,17 @@ class Spaces extends React.Component<SpacesProps, SpacesState> {
             let parentSpaceId: number = this.state.ancestorsPath.pop() as number;
             parentSpaceId = this.state.ancestorsPath.pop() as number;
             this.getSpaceDetails(parentSpaceId);
+        }
+    }
+
+    expandAccordion = () => (event: React.ChangeEvent<{}>, isExpanded: boolean) => {
+        if (this.state.spaces.length > 0) {
+            if (isExpanded) {
+                this.setState({ accordionExpanded: true })
+            }
+            else {
+                this.setState({ accordionExpanded: false })
+            }
         }
     }
 
@@ -104,47 +123,30 @@ class Spaces extends React.Component<SpacesProps, SpacesState> {
                     </Toolbar>
                 </AppBar>
                 <CardContent className={this.props.classes.cardRoot}>
-                    {
-                        this.state.spaces.length > 0 ?
-                            <Accordion>
-                                <AccordionSummary
-                                    expandIcon={<ExpandMoreIcon />}
-                                    aria-controls="panel1bh-content"
-                                    id="panel1bh-header"
-                                >
-                                    <Typography className={this.props.classes.accordionHeading}>Subspaces </Typography>
-                                    <Typography className={this.props.classes.accordionSecondaryHeading}>{this.state.spaces.length}</Typography>
-                                </AccordionSummary>
-                                <AccordionDetails>
-                                    {
-                                        this.state.spaces.map(space => (
-                                            <Card variant="outlined" key={space.id} className={this.props.classes.spaceCard}>
-                                                <Typography variant="h5" component="h2">
-                                                    {space.name}
-                                                </Typography>
-                                                <CardActions>
-                                                    <Button size="small" onClick={() => this.getSpaceDetails(space.id as number)}>Enter</Button>
-                                                </CardActions>
-                                            </Card>
-                                        ))
-                                    }
-                                </AccordionDetails>
-                            </Accordion>
-                            :
-                            <Accordion disabled>
-                                <AccordionSummary
-                                    expandIcon={<ExpandMoreIcon />}
-                                    aria-controls="panel1bh-content"
-                                    id="panel1bh-header"
-                                >
-                                    <Typography className={this.props.classes.accordionHeading}>Subspaces </Typography>
-                                    <Typography className={this.props.classes.accordionSecondaryHeading}>{this.state.spaces.length}</Typography>
-                                </AccordionSummary>
-                                <AccordionDetails>
-                                </AccordionDetails>
-                            </Accordion>
-                    }
-
+                    <Accordion expanded={this.state.accordionExpanded} onChange={this.expandAccordion()}>
+                        <AccordionSummary
+                            expandIcon={<ExpandMoreIcon />}
+                            aria-controls="panel1bh-content"
+                            id="panel1bh-header"
+                        >
+                            <Typography className={this.props.classes.accordionHeading}>Subspaces </Typography>
+                            <Typography className={this.props.classes.accordionSecondaryHeading}>{this.state.spaces.length}</Typography>
+                        </AccordionSummary>
+                        <AccordionDetails>
+                            {
+                                this.state.spaces.map(space => (
+                                    <Card variant="outlined" key={space.id} className={this.props.classes.spaceCard}>
+                                        <Typography variant="h5" component="h2">
+                                            {space.name}
+                                        </Typography>
+                                        <CardActions>
+                                            <Button size="small" onClick={() => this.getSpaceDetails(space.id as number)}>Enter</Button>
+                                        </CardActions>
+                                    </Card>
+                                ))
+                            }
+                        </AccordionDetails>
+                    </Accordion>
                     <Devices spaceId={this.state.spaceData.id as number}></Devices>
                 </CardContent>
             </>

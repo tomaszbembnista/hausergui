@@ -14,6 +14,7 @@ interface DevicesProps extends WithStyles<typeof styles> {
 interface DevicesState {
     devices: DeviceDTO[];
     accordion: string;
+    accordionExpanded: boolean;
 };
 
 class Devices extends React.Component<DevicesProps, DevicesState> {
@@ -22,6 +23,7 @@ class Devices extends React.Component<DevicesProps, DevicesState> {
         this.state = {
             devices: [],
             accordion: "",
+            accordionExpanded: false
         };
     }
 
@@ -32,6 +34,7 @@ class Devices extends React.Component<DevicesProps, DevicesState> {
     componentDidUpdate(prevProps: DevicesProps) {
         if (prevProps.spaceId !== this.props.spaceId) {
             this.getDevices(this.props.spaceId);
+            this.setState({ accordionExpanded: false });
         }
     }
 
@@ -42,13 +45,13 @@ class Devices extends React.Component<DevicesProps, DevicesState> {
         })
     }
 
-    expandAccordion = (panel: string) => (event: React.ChangeEvent<{}>, isExpanded: boolean) => {
+    expandAccordion = () => (event: React.ChangeEvent<{}>, isExpanded: boolean) => {
         if (this.state.devices.length > 0) {
             if (isExpanded) {
-                this.setState({ accordion: panel })
+                this.setState({ accordionExpanded: true })
             }
             else {
-                this.setState({ accordion: "" })
+                this.setState({ accordionExpanded: false })
             }
         }
     }
@@ -56,7 +59,7 @@ class Devices extends React.Component<DevicesProps, DevicesState> {
     render() {
         return (
             <>
-                <Accordion expanded={this.state.accordion === "panel1"} onChange={this.expandAccordion("panel1")}>
+                <Accordion expanded={this.state.accordionExpanded} onChange={this.expandAccordion()}>
                     <AccordionSummary
                         expandIcon={<ExpandMoreIcon />}
                         aria-controls="panel2bh-content"

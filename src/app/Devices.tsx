@@ -13,7 +13,6 @@ interface DevicesProps extends WithStyles<typeof styles> {
 
 interface DevicesState {
     devices: DeviceDTO[];
-    accordion: string;
     accordionExpanded: boolean;
 };
 
@@ -22,7 +21,6 @@ class Devices extends React.Component<DevicesProps, DevicesState> {
         super(props);
         this.state = {
             devices: [],
-            accordion: "",
             accordionExpanded: false
         };
     }

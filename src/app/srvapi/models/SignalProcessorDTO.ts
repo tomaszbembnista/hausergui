@@ -45,6 +45,12 @@ export interface SignalProcessorDTO {
     name?: string;
     /**
      * 
+     * @type {number}
+     * @memberof SignalProcessorDTO
+     */
+    spaceId?: number;
+    /**
+     * 
      * @type {string}
      * @memberof SignalProcessorDTO
      */
@@ -71,6 +77,7 @@ export function SignalProcessorDTOFromJSONTyped(json: any, ignoreDiscriminator: 
         '_configuration': !exists(json, 'configuration') ? undefined : json['configuration'],
         'id': !exists(json, 'id') ? undefined : json['id'],
         'name': !exists(json, 'name') ? undefined : json['name'],
+        'spaceId': !exists(json, 'spaceId') ? undefined : json['spaceId'],
         'state': !exists(json, 'state') ? undefined : json['state'],
         'status': !exists(json, 'status') ? undefined : json['status'],
     };
@@ -89,6 +96,7 @@ export function SignalProcessorDTOToJSON(value?: SignalProcessorDTO | null): any
         'configuration': value._configuration,
         'id': value.id,
         'name': value.name,
+        'spaceId': value.spaceId,
         'state': value.state,
         'status': value.status,
     };

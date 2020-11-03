@@ -18,6 +18,9 @@ import {
     DeviceDTO,
     DeviceDTOFromJSON,
     DeviceDTOToJSON,
+    SignalProcessorDTO,
+    SignalProcessorDTOFromJSON,
+    SignalProcessorDTOToJSON,
     SpaceDTO,
     SpaceDTOFromJSON,
     SpaceDTOToJSON,
@@ -32,6 +35,10 @@ export interface DeleteSpaceUsingDELETERequest {
 }
 
 export interface GetDevicesBelongingToSpaceUsingGETRequest {
+    id: number;
+}
+
+export interface GetSignalProcessorsBelongingToSpaceUsingGETRequest {
     id: number;
 }
 
@@ -141,6 +148,36 @@ export class SpaceResourceApi extends runtime.BaseAPI {
      */
     async getDevicesBelongingToSpaceUsingGET(requestParameters: GetDevicesBelongingToSpaceUsingGETRequest): Promise<Array<DeviceDTO>> {
         const response = await this.getDevicesBelongingToSpaceUsingGETRaw(requestParameters);
+        return await response.value();
+    }
+
+    /**
+     * getSignalProcessorsBelongingToSpace
+     */
+    async getSignalProcessorsBelongingToSpaceUsingGETRaw(requestParameters: GetSignalProcessorsBelongingToSpaceUsingGETRequest): Promise<runtime.ApiResponse<Array<SignalProcessorDTO>>> {
+        if (requestParameters.id === null || requestParameters.id === undefined) {
+            throw new runtime.RequiredError('id','Required parameter requestParameters.id was null or undefined when calling getSignalProcessorsBelongingToSpaceUsingGET.');
+        }
+
+        const queryParameters: runtime.HTTPQuery = {};
+
+        const headerParameters: runtime.HTTPHeaders = {};
+
+        const response = await this.request({
+            path: `/api/spaces/{id}/signalProcessors`.replace(`{${"id"}}`, encodeURIComponent(String(requestParameters.id))),
+            method: 'GET',
+            headers: headerParameters,
+            query: queryParameters,
+        });
+
+        return new runtime.JSONApiResponse(response, (jsonValue) => jsonValue.map(SignalProcessorDTOFromJSON));
+    }
+
+    /**
+     * getSignalProcessorsBelongingToSpace
+     */
+    async getSignalProcessorsBelongingToSpaceUsingGET(requestParameters: GetSignalProcessorsBelongingToSpaceUsingGETRequest): Promise<Array<SignalProcessorDTO>> {
+        const response = await this.getSignalProcessorsBelongingToSpaceUsingGETRaw(requestParameters);
         return await response.value();
     }
 

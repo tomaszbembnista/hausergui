@@ -2,6 +2,7 @@ import React from "react";
 import { SpaceResourceApi, SpaceDTO } from "./srvapi/index";
 import { forkJoin, of } from 'rxjs';
 import Devices from "./Devices";
+import SignalProcessors from "./SignalProcessors";
 import {
     Card, Typography, CardActions, Button, CardContent,
     Accordion, AccordionSummary, AccordionDetails,
@@ -170,6 +171,7 @@ class Spaces extends React.Component<SpacesProps, SpacesState> {
                         </AccordionDetails>
                     </Accordion>
                     <Devices spaceId={this.state.spaceData.id as number}></Devices>
+                    <SignalProcessors spaceId={this.state.spaceData.id as number}></SignalProcessors>
                 </CardContent>
             </>
         )

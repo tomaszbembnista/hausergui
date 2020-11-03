@@ -1,5 +1,5 @@
 import React from "react";
-import { SignalProcessorDTO, SpaceResourceApi } from "./srvapi";
+import { ProcessorOperationDesc, SignalProcessorDTO, SpaceResourceApi, SignalProcessorResourceApi } from "./srvapi";
 import { Accordion, AccordionDetails, AccordionSummary, Typography, WithStyles, withStyles } from "@material-ui/core";
 import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
 import styles from "./Styles";
@@ -9,7 +9,8 @@ interface SignalProcessorsProps extends WithStyles<typeof styles> {
 }
 
 interface SignalProcessorsState {
-    signalprocessors: SignalProcessorDTO[];
+    signalProcessors: SignalProcessorDTO[];
+    availableOperationsByClassname: Map<String, ProcessorOperationDesc[]>;
     accordionExpanded: boolean;
 }
 
@@ -17,24 +18,44 @@ class SignalProcessors extends React.Component<SignalProcessorsProps, SignalProc
     constructor(props: SignalProcessorsProps) {
         super(props);
         this.state = {
-            signalprocessors: [],
+            signalProcessors: [],
+            availableOperationsByClassname: new Map(),
             accordionExpanded: false
         };
     }
 
     componentDidMount() {
-        this.getSignalProcessors(this.props.spaceId);
+        this.getSignalProcessorsWithOperations(this.props.spaceId);
     }
 
-    getSignalProcessors(spaceId: number) {
-        let signalProcessorsApi = new SpaceResourceApi();
-        signalProcessorsApi.getSignalProcessorsBelongingToSpaceUsingGET({ id: spaceId }).then((values) => {
-            this.setState({ signalprocessors: values });
-        })
+    getSignalProcessorsWithOperations(spaceId: number) {
+        let spaceResource = new SpaceResourceApi();
+        let signalProcessorsData: Map<String, number> = new Map();
+        let signalProcessorsOperations: Map<String, ProcessorOperationDesc[]> = new Map();
+
+        spaceResource.getSignalProcessorsBelongingToSpaceUsingGET({ id: spaceId }).then((values) => {
+            this.setState({ signalProcessors: values });
+        }).then(() => {
+            for (let signalProcessor of this.state.signalProcessors) {
+                if (!signalProcessorsData.has(signalProcessor.className as String)) {
+                    signalProcessorsData.set(signalProcessor.className as String, signalProcessor.id as number);
+                }
+            }
+
+            let signalProcessorResource = new SignalProcessorResourceApi();
+            for (let mapKey of Array.from(signalProcessorsData.keys())) {
+                let key: number = signalProcessorsData.get(mapKey) as number;
+                signalProcessorResource.getSignalProcessorOperationsUsingGET({ id: key }).then((values) => {
+                    signalProcessorsOperations.set(mapKey, values);
+                }).then(() => {
+                    this.setState({ availableOperationsByClassname: signalProcessorsOperations })
+                })
+            }
+        });
     }
 
     expandAccordion = () => (event: React.ChangeEvent<{}>, isExpanded: boolean) => {
-        if (this.state.signalprocessors.length > 0) {
+        if (this.state.signalProcessors.length > 0) {
             if (isExpanded) {
                 this.setState({ accordionExpanded: true })
             }
@@ -53,15 +74,23 @@ class SignalProcessors extends React.Component<SignalProcessorsProps, SignalProc
                         aria-controls="panel2bh-content"
                         id="panel2bh-header"
                     >
-                        <Typography className={this.props.classes.accordionHeading}>Devices</Typography>
-                        <Typography className={this.props.classes.accordionSecondaryHeading}>{this.state.signalprocessors.length}</Typography>
+                        <Typography className={this.props.classes.accordionHeading}>Processors</Typography>
+                        <Typography className={this.props.classes.accordionSecondaryHeading}>{this.state.signalProcessors.length}</Typography>
                     </AccordionSummary>
                     <AccordionDetails>
                         <ul>
                             {
-                                this.state.signalprocessors.map(signalProcessor => (
+                                this.state.signalProcessors.map(signalProcessor => (
                                     <li key={signalProcessor.id}>
                                         {signalProcessor.name}
+                                        <ul>
+                                            {
+                                                typeof this.state.availableOperationsByClassname.get(signalProcessor.className as string) != "undefined" &&
+                                                this.state.availableOperationsByClassname.get(signalProcessor.className as string)!.map(option => (
+                                                    <li key={option.name}>{option.name}</li>
+                                                ))
+                                            }
+                                        </ul>
                                     </li>
                                 ))
                             }

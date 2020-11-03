@@ -10,14 +10,18 @@ import {
 import ArrowBackIosOutlinedIcon from '@material-ui/icons/ArrowBackIosOutlined';
 import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
 import styles from "./Styles";
+import { RouteComponentProps } from 'react-router-dom';
 
-interface SpacesProps extends WithStyles<typeof styles> {
-    parentSpaceId: number;
+interface RouteInfo {
+    id: string;
+}
+
+interface SpacesProps extends WithStyles<typeof styles>, RouteComponentProps<RouteInfo> {
+    spaceId: number | undefined;
 }
 
 interface SpacesState {
     spaceData: SpaceDTO;
-    ancestorsPath: number[];
     spaces: SpaceDTO[];
     accordionExpanded: boolean;
 }
@@ -25,21 +29,34 @@ interface SpacesState {
 class Spaces extends React.Component<SpacesProps, SpacesState> {
     constructor(props: SpacesProps) {
         super(props);
-        this.state = {
-            spaceData: {
-                id: this.props.parentSpaceId,
+
+        let stateSpaceData: SpaceDTO;
+        if (this.props.match.params.id) {
+            stateSpaceData = {
+                id: parseInt(this.props.match.params.id, 10),
                 name: "Spaces",
                 parentId: undefined,
                 slug: undefined
-            },
-            ancestorsPath: [],
+            }
+        }
+        else {
+            stateSpaceData = {
+                id: this.props.spaceId,
+                name: "Spaces",
+                parentId: undefined,
+                slug: undefined
+            }
+        }
+
+        this.state = {
+            spaceData: stateSpaceData,
             spaces: [],
             accordionExpanded: false
-        };
+        }
     }
 
     componentDidMount() {
-        this.getSpaceDetails(this.props.parentSpaceId);
+        this.getSpaceDetails(this.state.spaceData.id as number);
     }
 
     componentDidUpdate(prevProps: SpacesProps, prevState: SpacesState) {
@@ -83,17 +100,22 @@ class Spaces extends React.Component<SpacesProps, SpacesState> {
             }
             this.setState({
                 spaceData: newSpaceData,
-                ancestorsPath: this.state.ancestorsPath.concat(spaceId),
                 spaces: values[1]
             });
         });
     }
 
-    backButtonOnClickHandler() {
-        if (this.state.ancestorsPath.length > 0) {
-            let parentSpaceId: number = this.state.ancestorsPath.pop() as number;
-            parentSpaceId = this.state.ancestorsPath.pop() as number;
-            this.getSpaceDetails(parentSpaceId);
+    goFurther(spaceId: number) {
+        this.props.history.push('/space/' + spaceId);
+    }
+
+
+    goBack() {
+        if (typeof this.state.spaceData.parentId == "number") {
+            this.props.history.push('/space/' + this.state.spaceData.parentId);
+        }
+        else {
+            this.props.history.push('/space/-1');
         }
     }
 
@@ -118,7 +140,7 @@ class Spaces extends React.Component<SpacesProps, SpacesState> {
                         </Typography>
                         {
                             this.state.spaceData.id as number > -1 &&
-                            <ArrowBackIosOutlinedIcon className={this.props.classes.toolbarButton} onClick={() => this.backButtonOnClickHandler()} />
+                            <ArrowBackIosOutlinedIcon className={this.props.classes.toolbarButton} onClick={() => this.goBack()} />
                         }
                     </Toolbar>
                 </AppBar>
@@ -140,7 +162,7 @@ class Spaces extends React.Component<SpacesProps, SpacesState> {
                                             {space.name}
                                         </Typography>
                                         <CardActions>
-                                            <Button size="small" onClick={() => this.getSpaceDetails(space.id as number)}>Enter</Button>
+                                            <Button size="small" onClick={() => this.goFurther(space.id as number)}>Enter</Button>
                                         </CardActions>
                                     </Card>
                                 ))

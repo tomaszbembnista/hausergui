@@ -1,0 +1,10 @@
+API Desc: 
+http://localhost:8100/v2/api-docs
+
+Help:
+java -jar .\openapi-generator-cli-4.3.1.jar --help
+
+Generation:
+java -jar .\openapi-generator-cli-4.3.1.jar generate -i http://localhost:8100/v2/api-docs -g typescript-fetch -o ..\src\app\srvapi -c .\config.json
+
+

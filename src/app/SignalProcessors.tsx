@@ -1,5 +1,6 @@
 import React from "react";
-import { ProcessorOperationDesc, SignalProcessorDTO, SpaceResourceApi, SignalProcessorResourceApi } from "./srvapi";
+import { SignalProcessorDTO, SpaceResourceApi } from "./srvapi";
+import SignalProcessorOperations from "./SignalProcessorOperations";
 import { Accordion, AccordionDetails, AccordionSummary, Typography, WithStyles, withStyles } from "@material-ui/core";
 import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
 import styles from "./Styles";
@@ -10,7 +11,6 @@ interface SignalProcessorsProps extends WithStyles<typeof styles> {
 
 interface SignalProcessorsState {
     signalProcessors: SignalProcessorDTO[];
-    availableOperationsByClassname: Map<String, ProcessorOperationDesc[]>;
     accordionExpanded: boolean;
 }
 
@@ -19,7 +19,6 @@ class SignalProcessors extends React.Component<SignalProcessorsProps, SignalProc
         super(props);
         this.state = {
             signalProcessors: [],
-            availableOperationsByClassname: new Map(),
             accordionExpanded: false
         };
     }
@@ -30,27 +29,9 @@ class SignalProcessors extends React.Component<SignalProcessorsProps, SignalProc
 
     getSignalProcessorsWithOperations(spaceId: number) {
         let spaceResource = new SpaceResourceApi();
-        let signalProcessorsData: Map<String, number> = new Map();
-        let signalProcessorsOperations: Map<String, ProcessorOperationDesc[]> = new Map();
 
         spaceResource.getSignalProcessorsBelongingToSpaceUsingGET({ id: spaceId }).then((values) => {
             this.setState({ signalProcessors: values });
-        }).then(() => {
-            for (let signalProcessor of this.state.signalProcessors) {
-                if (!signalProcessorsData.has(signalProcessor.className as String)) {
-                    signalProcessorsData.set(signalProcessor.className as String, signalProcessor.id as number);
-                }
-            }
-
-            let signalProcessorResource = new SignalProcessorResourceApi();
-            for (let mapKey of Array.from(signalProcessorsData.keys())) {
-                let key: number = signalProcessorsData.get(mapKey) as number;
-                signalProcessorResource.getSignalProcessorOperationsUsingGET({ id: key }).then((values) => {
-                    signalProcessorsOperations.set(mapKey, values);
-                }).then(() => {
-                    this.setState({ availableOperationsByClassname: signalProcessorsOperations })
-                })
-            }
         });
     }
 
@@ -84,12 +65,7 @@ class SignalProcessors extends React.Component<SignalProcessorsProps, SignalProc
                                     <li key={signalProcessor.id}>
                                         {signalProcessor.name}
                                         <ul>
-                                            {
-                                                typeof this.state.availableOperationsByClassname.get(signalProcessor.className as string) != "undefined" &&
-                                                this.state.availableOperationsByClassname.get(signalProcessor.className as string)!.map(option => (
-                                                    <li key={option.name}>{option.name}</li>
-                                                ))
-                                            }
+                                            <SignalProcessorOperations signalProcessorId={signalProcessor.id as number} />
                                         </ul>
                                     </li>
                                 ))

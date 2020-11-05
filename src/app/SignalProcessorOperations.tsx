@@ -67,18 +67,22 @@ class SignalProcessorOperations extends React.Component<SignalProcessorOperation
     };
 
     handleClick(operation: ProcessorOperationDesc) {
-        console.log(this.state.operationsWithArguments);
+        let opIndex = this.state.operationsWithArguments.findIndex(op => op.operation === operation);
 
-        /*
-        let operationArgs: ProcessorOperationArgument = {
+        let opArgs = this.state.operationsWithArguments[opIndex].arguments;
 
-        }
-        */
-        /*let requestParameters: ExecuteSignalProcessorOperationsUsingPUTRequest = {
+        let requestParameters: ExecuteSignalProcessorOperationsUsingPUTRequest = {
             id: this.props.signalProcessorId,
             name: operation.name as string,
-            operationArguments: []
-        };*/
+            operationArguments: opArgs
+        };
+
+        let callSignalProcessorApi = new SignalProcessorResourceApi();
+        callSignalProcessorApi.executeSignalProcessorOperationsUsingPUT(requestParameters).then((response) => {
+            console.log(response);
+        }).catch((error) => {
+            console.log(error)
+        })
     }
 
     render() {

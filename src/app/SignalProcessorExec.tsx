@@ -8,7 +8,7 @@ interface SignalProcessorExecProps {
 }
 
 interface SignalProcessorExecState {
-    operationWithArguments: OperationWithArguments[];
+    operationWithArguments: OperationWithArguments;
 }
 
 interface OperationWithArguments {
@@ -20,7 +20,10 @@ class SignalProcessorExec extends React.Component<SignalProcessorExecProps, Sign
     constructor(props: SignalProcessorExecProps) {
         super(props);
         this.state = {
-            operationWithArguments: []
+            operationWithArguments: {
+                operation: {},
+                arguments: []
+            }
         };
     }
 
@@ -32,29 +35,26 @@ class SignalProcessorExec extends React.Component<SignalProcessorExecProps, Sign
         });
 
         this.setState({
-            operationWithArguments: this.state.operationWithArguments.concat({
-                operation: this.props.operation, arguments: args
-            })
+            operationWithArguments: {
+                operation: this.props.operation,
+                arguments: args
+            }
         });
     }
 
     handleChange = (operation: ProcessorOperationDesc, argumentString: string) => (event: React.ChangeEvent<HTMLInputElement>) => {
         let arrCopy = this.state.operationWithArguments;
 
-        let arrOpIndex = this.state.operationWithArguments.findIndex(op => op.operation === operation);
+        let arrArgIndex = this.state.operationWithArguments.arguments.findIndex(arg => arg.name === argumentString);
 
-        let arrArgIndex = this.state.operationWithArguments[arrOpIndex].arguments.findIndex(arg => arg.name === argumentString);
-
-        arrCopy[arrOpIndex].arguments[arrArgIndex] = { name: argumentString, value: event.target.value };
+        arrCopy.arguments[arrArgIndex] = { name: argumentString, value: event.target.value };
 
         this.setState({ operationWithArguments: arrCopy });
     };
 
 
     handleClick(operation: ProcessorOperationDesc) {
-        let opIndex = this.state.operationWithArguments.findIndex(op => op.operation === operation);
-
-        let opArgs = this.state.operationWithArguments[opIndex].arguments;
+        let opArgs = this.state.operationWithArguments.arguments;
 
         let requestParameters: ExecuteSignalProcessorOperationsUsingPUTRequest = {
             id: this.props.signalProcessorId,
@@ -70,21 +70,42 @@ class SignalProcessorExec extends React.Component<SignalProcessorExecProps, Sign
         })
     }
 
+    textFieldRequired(optional: boolean, argName: string): JSX.Element {
+        if (optional) {
+            return (
+                <TextField
+                    autoFocus
+                    margin="dense"
+                    key={argName}
+                    id={argName}
+                    label={argName}
+                    onChange={this.handleChange(this.props.operation, argName)}
+                    type="text"
+                    fullWidth
+                />
+            )
+        }
+        return (
+            <TextField
+                required
+                autoFocus
+                margin="dense"
+                key={argName}
+                id={argName}
+                label={argName}
+                onChange={this.handleChange(this.props.operation, argName)}
+                type="text"
+                fullWidth
+            />
+        )
+    }
+
     render() {
         return (
             <>
                 {
                     this.props.operation.arguments?.map(arg => (
-                        <TextField
-                            autoFocus
-                            margin="dense"
-                            key={arg.name}
-                            id={arg.name}
-                            label={arg.name}
-                            onChange={this.handleChange(this.props.operation, arg.name as string)}
-                            type="text"
-                            fullWidth
-                        />
+                        this.textFieldRequired(arg.optional as boolean, arg.name as string)
                     ))
                 }
                 <Button onClick={() => this.handleClick(this.props.operation)}>Change</Button>

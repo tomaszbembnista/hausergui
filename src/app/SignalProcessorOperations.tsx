@@ -49,13 +49,24 @@ class SignalProcessorOperations extends React.Component<SignalProcessorOperation
                     operationsWithArguments: this.state.operationsWithArguments.concat({
                         operation: operation, arguments: args
                     })
-                })
-            })
-        })
+                });
+            });
+        });
     }
 
+    handleChange = (operation: ProcessorOperationDesc, argumentString: string) => (event: React.ChangeEvent<HTMLInputElement>) => {
+        let arrCopy = this.state.operationsWithArguments;
+
+        let arrOpIndex = this.state.operationsWithArguments.findIndex(op => op.operation === operation);
+
+        let arrArgIndex = this.state.operationsWithArguments[arrOpIndex].arguments.findIndex(arg => arg.name === argumentString);
+
+        arrCopy[arrOpIndex].arguments[arrArgIndex] = { name: argumentString, value: event.target.value };
+
+        this.setState({ operationsWithArguments: arrCopy });
+    };
+
     handleClick(operation: ProcessorOperationDesc) {
-        console.log(operation);
         console.log(this.state.operationsWithArguments);
 
         /*
@@ -92,6 +103,7 @@ class SignalProcessorOperations extends React.Component<SignalProcessorOperation
                                                 key={arg.name}
                                                 id={arg.name}
                                                 label={arg.name}
+                                                onChange={this.handleChange(operation, arg.name as string)}
                                                 type="text"
                                                 fullWidth
                                             />

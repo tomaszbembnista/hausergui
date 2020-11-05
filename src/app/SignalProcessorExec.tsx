@@ -1,6 +1,7 @@
 import React from 'react';
 import { ExecuteSignalProcessorOperationsUsingPUTRequest, ProcessorOperationArgument, ProcessorOperationDesc, SignalProcessorResourceApi } from './srvapi';
 import { TextField, Button } from "@material-ui/core";
+import { OperationCanceledException } from 'typescript';
 
 interface SignalProcessorExecProps {
     operation: ProcessorOperationDesc;
@@ -8,22 +9,14 @@ interface SignalProcessorExecProps {
 }
 
 interface SignalProcessorExecState {
-    operationWithArguments: OperationWithArguments;
-}
-
-interface OperationWithArguments {
-    operation: ProcessorOperationDesc;
-    arguments: ProcessorOperationArgument[];
+    operationArguments: ProcessorOperationArgument[];
 }
 
 class SignalProcessorExec extends React.Component<SignalProcessorExecProps, SignalProcessorExecState> {
     constructor(props: SignalProcessorExecProps) {
         super(props);
         this.state = {
-            operationWithArguments: {
-                operation: {},
-                arguments: []
-            }
+            operationArguments: []
         };
     }
 
@@ -34,32 +27,31 @@ class SignalProcessorExec extends React.Component<SignalProcessorExecProps, Sign
             args.push({ name: arg.name, value: "" });
         });
 
-        this.setState({
-            operationWithArguments: {
-                operation: this.props.operation,
-                arguments: args
-            }
-        });
+        this.setState({ operationArguments: args });
+    }
+
+    validateFields() {
+
     }
 
     handleChange = (operation: ProcessorOperationDesc, argumentString: string) => (event: React.ChangeEvent<HTMLInputElement>) => {
-        let arrCopy = this.state.operationWithArguments;
+        let arrCopy = this.state.operationArguments;
 
-        let arrArgIndex = this.state.operationWithArguments.arguments.findIndex(arg => arg.name === argumentString);
+        let arrArgIndex = this.state.operationArguments.findIndex(arg => arg.name === argumentString);
 
-        arrCopy.arguments[arrArgIndex] = { name: argumentString, value: event.target.value };
+        arrCopy[arrArgIndex] = { name: argumentString, value: event.target.value };
 
-        this.setState({ operationWithArguments: arrCopy });
+        this.setState({ operationArguments: arrCopy });
     };
 
 
     handleClick(operation: ProcessorOperationDesc) {
-        let opArgs = this.state.operationWithArguments.arguments;
-
+        this.validateFields();
+        /*
         let requestParameters: ExecuteSignalProcessorOperationsUsingPUTRequest = {
             id: this.props.signalProcessorId,
             name: operation.name as string,
-            operationArguments: opArgs
+            operationArguments: this.state.operationWithArguments.arguments
         };
 
         let callSignalProcessorApi = new SignalProcessorResourceApi();
@@ -68,6 +60,7 @@ class SignalProcessorExec extends React.Component<SignalProcessorExecProps, Sign
         }).catch((error) => {
             console.log(error)
         })
+        */
     }
 
     textFieldRequired(optional: boolean, argName: string): JSX.Element {

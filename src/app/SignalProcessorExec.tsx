@@ -1,7 +1,6 @@
 import React from 'react';
 import { ExecuteSignalProcessorOperationsUsingPUTRequest, ProcessorOperationArgument, ProcessorOperationDesc, SignalProcessorResourceApi } from './srvapi';
 import { TextField, Button } from "@material-ui/core";
-import { OperationCanceledException } from 'typescript';
 
 interface SignalProcessorExecProps {
     operation: ProcessorOperationDesc;
@@ -10,6 +9,18 @@ interface SignalProcessorExecProps {
 
 interface SignalProcessorExecState {
     operationArguments: ProcessorOperationArgument[];
+}
+
+enum FieldType {
+    FLOAT = 'number',
+    INT = 'number',
+    STRING = 'string',
+    DATE = 'date',
+    FLOATLIST = 'number[]',
+    INTLIST = 'number[]',
+    STRINGLIST = 'string[]',
+    DATELIST = 'date[]',
+    VOID = 'void'
 }
 
 class SignalProcessorExec extends React.Component<SignalProcessorExecProps, SignalProcessorExecState> {
@@ -30,11 +41,23 @@ class SignalProcessorExec extends React.Component<SignalProcessorExecProps, Sign
         this.setState({ operationArguments: args });
     }
 
-    validateFields() {
+    validateFields(): boolean {
+        let validated: boolean = true;
 
+        this.state.operationArguments.map((opArgs) => {
+            this.props.operation.arguments?.map((args) => {
+                if (opArgs.name === args.name) {
+                    if (!args.optional && opArgs.value?.length === 0) {
+                        validated = false;
+                    }
+                }
+            })
+        })
+
+        return validated;
     }
 
-    handleChange = (operation: ProcessorOperationDesc, argumentString: string) => (event: React.ChangeEvent<HTMLInputElement>) => {
+    handleChange = (argumentString: string) => (event: React.ChangeEvent<HTMLInputElement>) => {
         let arrCopy = this.state.operationArguments;
 
         let arrArgIndex = this.state.operationArguments.findIndex(arg => arg.name === argumentString);
@@ -45,25 +68,27 @@ class SignalProcessorExec extends React.Component<SignalProcessorExecProps, Sign
     };
 
 
-    handleClick(operation: ProcessorOperationDesc) {
-        this.validateFields();
-        /*
-        let requestParameters: ExecuteSignalProcessorOperationsUsingPUTRequest = {
-            id: this.props.signalProcessorId,
-            name: operation.name as string,
-            operationArguments: this.state.operationWithArguments.arguments
-        };
+    handleClick() {
+        if (this.validateFields()) {
+            let requestParameters: ExecuteSignalProcessorOperationsUsingPUTRequest = {
+                id: this.props.signalProcessorId,
+                name: this.props.operation.name as string,
+                operationArguments: this.state.operationArguments
+            };
 
-        let callSignalProcessorApi = new SignalProcessorResourceApi();
-        callSignalProcessorApi.executeSignalProcessorOperationsUsingPUT(requestParameters).then((response) => {
-            console.log(response);
-        }).catch((error) => {
-            console.log(error)
-        })
-        */
+            let callSignalProcessorApi = new SignalProcessorResourceApi();
+            callSignalProcessorApi.executeSignalProcessorOperationsUsingPUT(requestParameters).then((response) => {
+                console.log(response);
+            }).catch((error) => {
+                console.log(error)
+            })
+        }
+        else {
+            // handle errors
+        }
     }
 
-    textFieldRequired(optional: boolean, argName: string): JSX.Element {
+    textFieldRequired(optional: boolean, argName: string, argType: string): JSX.Element {
         if (optional) {
             return (
                 <TextField
@@ -72,8 +97,8 @@ class SignalProcessorExec extends React.Component<SignalProcessorExecProps, Sign
                     key={argName}
                     id={argName}
                     label={argName}
-                    onChange={this.handleChange(this.props.operation, argName)}
-                    type="text"
+                    onChange={this.handleChange(argName)}
+                    type={FieldType[argType as keyof typeof FieldType]}
                     fullWidth
                 />
             )
@@ -86,8 +111,8 @@ class SignalProcessorExec extends React.Component<SignalProcessorExecProps, Sign
                 key={argName}
                 id={argName}
                 label={argName}
-                onChange={this.handleChange(this.props.operation, argName)}
-                type="text"
+                onChange={this.handleChange(argName)}
+                type={FieldType[argType as keyof typeof FieldType]}
                 fullWidth
             />
         )
@@ -98,10 +123,10 @@ class SignalProcessorExec extends React.Component<SignalProcessorExecProps, Sign
             <>
                 {
                     this.props.operation.arguments?.map(arg => (
-                        this.textFieldRequired(arg.optional as boolean, arg.name as string)
+                        this.textFieldRequired(arg.optional as boolean, arg.name as string, arg.type as string)
                     ))
                 }
-                <Button onClick={() => this.handleClick(this.props.operation)}>Change</Button>
+                <Button onClick={() => this.handleClick()}>Change</Button>
             </>
         )
     }

@@ -1,6 +1,7 @@
 import React from 'react';
 import { ExecuteSignalProcessorOperationsUsingPUTRequest, ProcessorOperationArgument, ProcessorOperationDesc, SignalProcessorResourceApi } from './srvapi';
 import { TextField, Button, Grid } from "@material-ui/core";
+import SignalProcessorOperationInput from './SignalProcessorOperationInput';
 
 interface SignalProcessorExecProps {
     operation: ProcessorOperationDesc;
@@ -8,8 +9,13 @@ interface SignalProcessorExecProps {
 }
 
 interface SignalProcessorExecState {
-    operationArguments: ProcessorOperationArgument[];
+    operationArguments: OperationArgument[];
     fieldsWithErrors: string[];
+}
+
+interface OperationArgument {
+    name: string;
+    value: string[];
 }
 
 enum FieldType {
@@ -34,16 +40,18 @@ class SignalProcessorExec extends React.Component<SignalProcessorExecProps, Sign
     }
 
     componentDidMount() {
-        let args: ProcessorOperationArgument[] = [];
+        let args: OperationArgument[] = [];
 
         this.props.operation.arguments?.map((arg) => {
-            args.push({ name: arg.name, value: "" });
+            let emptyArray: string[] = [];
+            args.push({ name: arg.name as string, value: emptyArray });
         });
 
         this.setState({ operationArguments: args });
     }
 
-    validateFields(): { toSend: boolean, errors: string[] } {
+    /*
+    validateFields(): { toSend: boolean, errors: string[] } { 
         let validation: { toSend: boolean, errors: string[] } = { toSend: true, errors: [] }
 
         this.state.operationArguments.map((opArgs) => {
@@ -56,30 +64,35 @@ class SignalProcessorExec extends React.Component<SignalProcessorExecProps, Sign
                 }
             })
         })
-        return validation;
-    }
+        return validation; 
+    } 
+    */
 
     handleChange = (argumentString: string) => (event: React.ChangeEvent<HTMLInputElement>) => {
         let arrCopy = this.state.operationArguments;
 
-        let arrArgIndex = this.state.operationArguments.findIndex(arg => arg.name === argumentString);
+        const arrArgIndex = this.state.operationArguments.findIndex(arg => arg.name === argumentString);
 
-        arrCopy[arrArgIndex] = { name: argumentString, value: event.target.value };
+        const newValue: string[] = [event.target.value]
+
+        arrCopy[arrArgIndex] = { name: argumentString, value: newValue };
 
         this.setState({ operationArguments: arrCopy });
     };
 
 
     handleClick() {
+        console.log(this.state.operationArguments);
+        /*
         let fieldsValidation = this.validateFields();
-
+    
         if (fieldsValidation.toSend) {
             let requestParameters: ExecuteSignalProcessorOperationsUsingPUTRequest = {
                 id: this.props.signalProcessorId,
                 name: this.props.operation.name as string,
                 operationArguments: this.state.operationArguments
             };
-
+    
             let callSignalProcessorApi = new SignalProcessorResourceApi();
             callSignalProcessorApi.executeSignalProcessorOperationsUsingPUT(requestParameters).then((response) => {
                 console.log(response);
@@ -90,9 +103,16 @@ class SignalProcessorExec extends React.Component<SignalProcessorExecProps, Sign
         else {
             this.setState({ fieldsWithErrors: fieldsValidation.errors })
         }
+        */
     }
 
-    textFieldRequired(optional: boolean, argName: string, argType: string): JSX.Element {
+    textField(optional: boolean, argName: string, argType: string): JSX.Element {
+        const isArray: boolean = argType.includes("LIST");
+        let arrayElementsType: string;
+        if (isArray) {
+            arrayElementsType = argType.replace("LIST", "");
+        }
+
         if (optional) {
             return (
                 <TextField
@@ -152,7 +172,7 @@ class SignalProcessorExec extends React.Component<SignalProcessorExecProps, Sign
                 {
                     this.props.operation.arguments?.map(arg => (
                         <Grid item key={arg.name}>
-                            {this.textFieldRequired(arg.optional as boolean, arg.name as string, arg.type as string)}
+                            {this.textField(arg.optional as boolean, arg.name as string, arg.type as string)}
                         </Grid>
                     ))
                 }

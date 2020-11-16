@@ -15,7 +15,8 @@ interface SignalProcessorExecState {
 
 interface OperationArgument {
     name: string;
-    value: string[];
+    value?: string;
+    arrayValue?: string[];
 }
 
 enum FieldType {
@@ -43,8 +44,12 @@ class SignalProcessorExec extends React.Component<SignalProcessorExecProps, Sign
         let args: OperationArgument[] = [];
 
         this.props.operation.arguments?.map((arg) => {
-            let emptyArray: string[] = [];
-            args.push({ name: arg.name as string, value: emptyArray });
+            if (arg.type?.includes("LIST")) {
+                args.push({ name: arg.name as string, arrayValue: [""] });
+            }
+            else {
+                args.push({ name: arg.name as string, value: "" });
+            }
         });
 
         this.setState({ operationArguments: args });
@@ -68,14 +73,12 @@ class SignalProcessorExec extends React.Component<SignalProcessorExecProps, Sign
     } 
     */
 
-    handleChange = (argumentString: string) => (event: React.ChangeEvent<HTMLInputElement>) => {
+    handleChange = (argumentName: string) => (event: React.ChangeEvent<HTMLInputElement>) => {
         let arrCopy = this.state.operationArguments;
 
-        const arrArgIndex = this.state.operationArguments.findIndex(arg => arg.name === argumentString);
+        const arrArgIndex = this.state.operationArguments.findIndex(arg => arg.name === argumentName);
 
-        const newValue: string[] = [event.target.value]
-
-        arrCopy[arrArgIndex] = { name: argumentString, value: newValue };
+        arrCopy[arrArgIndex] = { name: argumentName, value: event.target.value };
 
         this.setState({ operationArguments: arrCopy });
     };
@@ -107,12 +110,6 @@ class SignalProcessorExec extends React.Component<SignalProcessorExecProps, Sign
     }
 
     textField(optional: boolean, argName: string, argType: string): JSX.Element {
-        const isArray: boolean = argType.includes("LIST");
-        let arrayElementsType: string;
-        if (isArray) {
-            arrayElementsType = argType.replace("LIST", "");
-        }
-
         if (optional) {
             return (
                 <TextField
@@ -161,7 +158,60 @@ class SignalProcessorExec extends React.Component<SignalProcessorExecProps, Sign
         }
     }
 
+    textFieldList(optional: boolean, argName: string, argType: string): JSX.Element {
+        let arrayElementsType = argType.replace("LIST", "");
+
+        if (optional) {
+            return (
+                <TextField
+                    autoFocus
+                    margin="dense"
+                    key={argName}
+                    id={argName}
+                    label={argName}
+                    onChange={() => console.log("change")}
+                    type={FieldType[arrayElementsType as keyof typeof FieldType]}
+                    fullWidth
+                />
+            )
+        }
+        if (this.state.fieldsWithErrors.includes(argName)) {
+            return (
+                <TextField
+                    required
+                    error
+                    autoFocus
+                    helperText="This field cannot be empty"
+                    margin="dense"
+                    key={argName}
+                    id={argName}
+                    label={argName}
+                    onChange={() => console.log("change")}
+                    type={FieldType[arrayElementsType as keyof typeof FieldType]}
+                    fullWidth
+                />
+            )
+        }
+        else {
+            return (
+                <TextField
+                    required
+                    autoFocus
+                    margin="dense"
+                    key={argName}
+                    id={argName}
+                    label={argName}
+                    onChange={() => console.log("change")}
+                    type={FieldType[arrayElementsType as keyof typeof FieldType]}
+                    fullWidth
+                />
+            )
+        }
+    }
+
     render() {
+        let { fieldsWithErrors, operationArguments } = this.state;
+
         return (
             <Grid
                 container
@@ -172,7 +222,12 @@ class SignalProcessorExec extends React.Component<SignalProcessorExecProps, Sign
                 {
                     this.props.operation.arguments?.map(arg => (
                         <Grid item key={arg.name}>
-                            {this.textField(arg.optional as boolean, arg.name as string, arg.type as string)}
+                            {
+                                arg.type?.includes("LIST") ?
+                                    this.textFieldList(arg.optional as boolean, arg.name as string, arg.type as string)
+                                    :
+                                    this.textField(arg.optional as boolean, arg.name as string, arg.type as string)
+                            }
                         </Grid>
                     ))
                 }

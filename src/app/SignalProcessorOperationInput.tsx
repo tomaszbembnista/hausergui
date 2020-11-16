@@ -3,14 +3,14 @@ import { TextField } from '@material-ui/core';
 
 interface InputProps {
     optional: boolean;
-    error: boolean;
+    //error: boolean;
     operationArguments: OperationArgument[];
     argumentType: string;
 }
 
 interface OperationArgument {
     name: string;
-    value: string[];
+    value: string;
 }
 
 enum FieldType {
@@ -26,70 +26,54 @@ enum FieldType {
 }
 
 const SignalProcessorOperationInput = (props: InputProps) => {
-    if (props.optional) {
-        return (
-            props.operationArguments.map((val, id) => {
-                let opId = `op-${id}`;
-                return (
-                    <TextField
-                        autoFocus
-                        margin="dense"
-                        key={opId}
-                        id={opId}
-                        label={val.name}
-                        value={props.operationArguments[id].value}
-                        type={FieldType[props.argumentType as keyof typeof FieldType]}
-                        fullWidth
-                    />
-                )
-            })
-        )
-    }
-    else {
+    const generateTextField = (values: OperationArgument, id: number) => {
+        let opId = `op-${id}`;
+
+        /* 
         if (props.error) {
             return (
-                props.operationArguments.map((val, id) => {
-                    let opId = `op-${id}`;
-                    return (
-                        <TextField
-                            autoFocus
-                            required
-                            helperText="This field cannot be empty"
-                            error
-                            margin="dense"
-                            key={opId}
-                            id={opId}
-                            label={val.name}
-                            value={props.operationArguments[id].value}
-                            type={FieldType[props.argumentType as keyof typeof FieldType]}
-                            fullWidth
-                        />
-                    )
-                })
+                <TextField
+                    autoFocus
+                    required={!props.optional}
+                    helperText="This field cannot be empty"
+                    error={props.error}
+                    margin="dense"
+                    key={opId}
+                    id={opId}
+                    label={values.name}
+                    value={props.operationArguments[id].value}
+                    type={FieldType[props.argumentType as keyof typeof FieldType]}
+                    fullWidth
+                />
             )
         }
-        else {
-            return (
-                props.operationArguments.map((val, id) => {
-                    let opId = `op-${id}`;
-                    return (
-                        <TextField
-                            autoFocus
-                            required
-                            margin="dense"
-                            key={opId}
-                            id={opId}
-                            label={val.name}
-                            value={props.operationArguments[id].value}
-                            type={FieldType[props.argumentType as keyof typeof FieldType]}
-                            fullWidth
-                        />
-                    )
-                })
-            )
-        }
-
+        */
+        return (
+            <TextField
+                autoFocus
+                required={!props.optional}
+                margin="dense"
+                key={opId}
+                id={opId}
+                label={values.name}
+                value={props.operationArguments[id].value}
+                type={FieldType[props.argumentType as keyof typeof FieldType]}
+                fullWidth
+            />
+        )
     }
+
+    return (
+        <>
+            {
+                props.operationArguments.map((val, id) => {
+                    return (
+                        generateTextField(val, id)
+                    )
+                })
+            }
+        </>
+    )
 }
 
 export default SignalProcessorOperationInput;

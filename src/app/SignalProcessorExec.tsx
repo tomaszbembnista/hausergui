@@ -167,6 +167,7 @@ class SignalProcessorExec extends React.Component<SignalProcessorExecProps, Sign
                     {
                         this.state.operationArrayArguments.map(arg => {
                             if (arg.name === argName) {
+                                const index = this.state.operationArrayArguments.findIndex(i => i.id === arg.id);
                                 return (
                                     <>
                                         <TextField
@@ -179,13 +180,14 @@ class SignalProcessorExec extends React.Component<SignalProcessorExecProps, Sign
                                             id={arg.id}
                                             label={argName}
                                             onChange={this.handleChangeList(arg.id, argName)}
+                                            value={this.state.operationArrayArguments[index].value}
                                             type={FieldType[arrayElementsType as keyof typeof FieldType]}
                                             fullWidth
                                         />
-                                        <IconButton>
+                                        <IconButton onClick={() => this.handleAddTextField(arg.name)}>
                                             <AddIcon />
                                         </IconButton>
-                                        <IconButton>
+                                        <IconButton disabled={this.state.operationArrayArguments.length === 1} onClick={() => this.handleRemoveTextField(arg.id)}>
                                             <RemoveIcon />
                                         </IconButton>
                                     </>
@@ -202,6 +204,7 @@ class SignalProcessorExec extends React.Component<SignalProcessorExecProps, Sign
                     {
                         this.state.operationArrayArguments.map(arg => {
                             if (arg.name === argName) {
+                                const index = this.state.operationArrayArguments.findIndex(i => i.id === arg.id);
                                 return (
                                     <>
                                         <TextField
@@ -212,6 +215,7 @@ class SignalProcessorExec extends React.Component<SignalProcessorExecProps, Sign
                                             id={arg.id}
                                             label={argName}
                                             onChange={this.handleChangeList(arg.id, argName)}
+                                            value={this.state.operationArrayArguments[index].value}
                                             type={FieldType[arrayElementsType as keyof typeof FieldType]}
                                             fullWidth
                                         />

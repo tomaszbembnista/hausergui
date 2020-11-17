@@ -7,7 +7,6 @@ import {
 import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
 import styles from "./Styles";
 import SignalProcessorExec from "./SignalProcessorExec";
-import SPE from "./SignalProcessorExec";
 
 interface SignalProcessorOperationsProps extends WithStyles<typeof styles> {
     signalProcessorId: number;
@@ -46,7 +45,7 @@ class SignalProcessorOperations extends React.Component<SignalProcessorOperation
                                     <Typography className={this.props.classes.accordionHeading}>{operation.name}</Typography>
                                 </AccordionSummary>
                                 <AccordionDetails>
-                                    <SPE operation={operation} signalProcessorId={this.props.signalProcessorId} />
+                                    <SignalProcessorExec operation={operation} signalProcessorId={this.props.signalProcessorId} />
                                 </AccordionDetails>
                             </Accordion>
                         </Grid>

@@ -89,6 +89,7 @@ class SignalProcessorExec extends React.Component<SignalProcessorExecProps, Sign
 
     handleClick() {
         console.log(this.state.operationArguments);
+        console.log(this.state.operationArrayArguments);
         /*
         let fieldsValidation = this.validateFields();
 
@@ -174,8 +175,8 @@ class SignalProcessorExec extends React.Component<SignalProcessorExecProps, Sign
                                             autoFocus
                                             helperText="This field cannot be empty"
                                             margin="dense"
-                                            key={argName}
-                                            id={argName}
+                                            key={arg.id}
+                                            id={arg.id}
                                             label={argName}
                                             onChange={this.handleChangeList(arg.id, argName)}
                                             type={FieldType[arrayElementsType as keyof typeof FieldType]}
@@ -207,17 +208,17 @@ class SignalProcessorExec extends React.Component<SignalProcessorExecProps, Sign
                                             required={!optional}
                                             autoFocus
                                             margin="dense"
-                                            key={argName}
-                                            id={argName}
+                                            key={arg.id}
+                                            id={arg.id}
                                             label={argName}
                                             onChange={this.handleChangeList(arg.id, argName)}
                                             type={FieldType[arrayElementsType as keyof typeof FieldType]}
                                             fullWidth
                                         />
-                                        <IconButton>
+                                        <IconButton onClick={() => this.handleAddTextField(arg.name)}>
                                             <AddIcon />
                                         </IconButton>
-                                        <IconButton>
+                                        <IconButton disabled={this.state.operationArrayArguments.length === 1} onClick={() => this.handleRemoveTextField(arg.id)}>
                                             <RemoveIcon />
                                         </IconButton>
                                     </>
@@ -238,6 +239,27 @@ class SignalProcessorExec extends React.Component<SignalProcessorExecProps, Sign
         arrCopy[arrArgIndex] = { id: argumentId, name: argumentName, value: event.target.value };
 
         this.setState({ operationArrayArguments: arrCopy });
+    }
+
+    handleAddTextField = (argName: string): void => {
+        this.setState((prevState, props) => ({
+            operationArrayArguments: prevState.operationArrayArguments.concat({
+                id: uuidv4(),
+                name: argName,
+                value: ""
+            })
+        })
+        )
+    }
+
+    handleRemoveTextField = (id: string) => {
+        let values = [...this.state.operationArrayArguments];
+
+        const fieldIndex = this.state.operationArrayArguments.findIndex(arg => arg.id === id);
+
+        values.splice(fieldIndex, 1);
+
+        this.setState({ operationArrayArguments: values });
     }
 
     render() {

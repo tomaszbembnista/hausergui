@@ -4,10 +4,10 @@ import {
     ProcessorOperationArgumentDescFromJSON, ProcessorOperationDesc, SignalProcessorResourceApi
 } from './srvapi';
 import { TextField, Button, Grid, IconButton } from "@material-ui/core";
-import SignalProcessorOperationInput from './SignalProcessorOperationInput';
 import AddIcon from "@material-ui/icons/Add";
 import RemoveIcon from "@material-ui/icons/Remove";
 import { v4 as uuidv4 } from 'uuid';
+import SignalProcessorInput from './SignalProcessorInput';
 
 interface SignalProcessorExecProps {
     operation: ProcessorOperationDesc;
@@ -111,41 +111,6 @@ class SignalProcessorExec extends React.Component<SignalProcessorExecProps, Sign
             this.setState({ fieldsWithErrors: fieldsValidation.errors })
         }
         */
-    }
-
-    textField(optional: boolean, argName: string, argType: string): JSX.Element {
-        if (this.state.fieldsWithErrors.includes(argName)) {
-            return (
-                <TextField
-                    required
-                    error
-                    autoFocus
-                    helperText="This field cannot be empty"
-                    margin="dense"
-                    key={argName}
-                    id={argName}
-                    label={argName}
-                    onChange={this.handleChange(argName)}
-                    type={FieldType[argType as keyof typeof FieldType]}
-                    fullWidth
-                />
-            )
-        }
-        else {
-            return (
-                <TextField
-                    required={!optional}
-                    autoFocus
-                    margin="dense"
-                    key={argName}
-                    id={argName}
-                    label={argName}
-                    onChange={this.handleChange(argName)}
-                    type={FieldType[argType as keyof typeof FieldType]}
-                    fullWidth
-                />
-            )
-        }
     }
 
     handleChange = (argumentName: string) => (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -266,6 +231,47 @@ class SignalProcessorExec extends React.Component<SignalProcessorExecProps, Sign
         this.setState({ operationArrayArguments: values });
     }
 
+    listFields(): JSX.Element {
+        return (
+            <>
+                {
+                    this.props.operation.arguments?.map(arg => {
+                        if (arg.type?.includes("LIST")) {
+                            return (
+                                <Grid item key={arg.name}>
+                                    {
+                                        this.textFieldList(arg.optional as boolean, arg.name as string, arg.type as string)
+                                    }
+                                </Grid>
+                            )
+                        }
+                        else {
+                            const opIdx: number = this.state.operationArguments.findIndex(i => i.name === arg.name);
+                            if (opIdx > -1) {
+                                return (
+                                    <Grid item key={arg.name}>
+                                        <SignalProcessorInput
+                                            optional={arg.optional as boolean}
+                                            operationArgument={this.state.operationArguments[opIdx]}
+                                            argName={arg.name as string}
+                                            argType={arg.type as string}
+                                            onChangeFunc={this.handleChange}
+                                        />
+                                    </Grid>
+                                    //this.textField(arg.optional as boolean, arg.name as string, arg.type as string)
+                                )
+                            }
+                            else {
+                                return (<></>)
+                            }
+
+                        }
+                    })
+                }
+            </>
+        )
+    }
+
     render() {
         return (
             <Grid
@@ -274,18 +280,7 @@ class SignalProcessorExec extends React.Component<SignalProcessorExecProps, Sign
                 justify="center"
                 alignItems="stretch"
             >
-                {
-                    this.props.operation.arguments?.map(arg => (
-                        <Grid item key={arg.name}>
-                            {
-                                arg.type?.includes("LIST") ?
-                                    this.textFieldList(arg.optional as boolean, arg.name as string, arg.type as string)
-                                    :
-                                    this.textField(arg.optional as boolean, arg.name as string, arg.type as string)
-                            }
-                        </Grid>
-                    ))
-                }
+                {this.listFields()}
                 <Button onClick={() => this.handleClick()}>Change</Button>
             </Grid>
         )

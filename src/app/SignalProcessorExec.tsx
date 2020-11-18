@@ -3,11 +3,10 @@ import {
     ExecuteSignalProcessorOperationsUsingPUTRequest, ProcessorOperationArgument,
     ProcessorOperationArgumentDescFromJSON, ProcessorOperationDesc, SignalProcessorResourceApi
 } from './srvapi';
-import { TextField, Button, Grid, IconButton } from "@material-ui/core";
-import AddIcon from "@material-ui/icons/Add";
-import RemoveIcon from "@material-ui/icons/Remove";
+import { Button, Grid } from "@material-ui/core";
 import { v4 as uuidv4 } from 'uuid';
 import SignalProcessorInput from './SignalProcessorInput';
+import SignalProcessorListInput from './SignalProcessorListInput';
 
 interface SignalProcessorExecProps {
     operation: ProcessorOperationDesc;
@@ -29,18 +28,6 @@ interface OperationArrayArgument {
     id: string;
     name: string;
     value: string;
-}
-
-enum FieldType {
-    FLOAT = 'number',
-    INT = 'number',
-    STRING = 'string',
-    DATE = 'date',
-    FLOATLIST = 'number[]',
-    INTLIST = 'number[]',
-    STRINGLIST = 'string[]',
-    DATELIST = 'date[]',
-    VOID = 'void'
 }
 
 class SignalProcessorExec extends React.Component<SignalProcessorExecProps, SignalProcessorExecState> {
@@ -123,83 +110,6 @@ class SignalProcessorExec extends React.Component<SignalProcessorExecProps, Sign
         this.setState({ operationArguments: arrCopy });
     };
 
-    textFieldList(optional: boolean, argName: string, argType: string): JSX.Element {
-        let arrayElementsType = argType.replace("LIST", "");
-
-        if (this.state.fieldsWithErrors.includes(argName)) {
-            return (
-                <>
-                    {
-                        this.state.operationArrayArguments.map(arg => {
-                            if (arg.name === argName) {
-                                const index = this.state.operationArrayArguments.findIndex(i => i.id === arg.id);
-                                return (
-                                    <>
-                                        <TextField
-                                            required
-                                            error
-                                            autoFocus
-                                            helperText="This field cannot be empty"
-                                            margin="dense"
-                                            key={arg.id}
-                                            id={arg.id}
-                                            label={argName}
-                                            onChange={this.handleChangeList(arg.id, argName)}
-                                            value={this.state.operationArrayArguments[index].value}
-                                            type={FieldType[arrayElementsType as keyof typeof FieldType]}
-                                            fullWidth
-                                        />
-                                        <IconButton onClick={() => this.handleAddTextField(arg.name)}>
-                                            <AddIcon />
-                                        </IconButton>
-                                        <IconButton disabled={this.state.operationArrayArguments.length === 1} onClick={() => this.handleRemoveTextField(arg.id)}>
-                                            <RemoveIcon />
-                                        </IconButton>
-                                    </>
-                                )
-                            }
-                        })
-                    }
-                </>
-            )
-        }
-        else {
-            return (
-                <>
-                    {
-                        this.state.operationArrayArguments.map(arg => {
-                            if (arg.name === argName) {
-                                const index = this.state.operationArrayArguments.findIndex(i => i.id === arg.id);
-                                return (
-                                    <>
-                                        <TextField
-                                            required={!optional}
-                                            autoFocus
-                                            margin="dense"
-                                            key={arg.id}
-                                            id={arg.id}
-                                            label={argName}
-                                            onChange={this.handleChangeList(arg.id, argName)}
-                                            value={this.state.operationArrayArguments[index].value}
-                                            type={FieldType[arrayElementsType as keyof typeof FieldType]}
-                                            fullWidth
-                                        />
-                                        <IconButton onClick={() => this.handleAddTextField(arg.name)}>
-                                            <AddIcon />
-                                        </IconButton>
-                                        <IconButton disabled={this.state.operationArrayArguments.length === 1} onClick={() => this.handleRemoveTextField(arg.id)}>
-                                            <RemoveIcon />
-                                        </IconButton>
-                                    </>
-                                )
-                            }
-                        })
-                    }
-                </>
-            )
-        }
-    }
-
     handleChangeList = (argumentId: string, argumentName: string) => (event: React.ChangeEvent<HTMLInputElement>): void => {
         let arrCopy = this.state.operationArrayArguments;
 
@@ -239,9 +149,15 @@ class SignalProcessorExec extends React.Component<SignalProcessorExecProps, Sign
                         if (arg.type?.includes("LIST")) {
                             return (
                                 <Grid item key={arg.name}>
-                                    {
-                                        this.textFieldList(arg.optional as boolean, arg.name as string, arg.type as string)
-                                    }
+                                    <SignalProcessorListInput
+                                        optional={arg.optional as boolean}
+                                        argName={arg.name as string}
+                                        argType={arg.type as string}
+                                        operationArrayArguments={this.state.operationArrayArguments}
+                                        onChangeFunc={this.handleChangeList}
+                                        addFieldFunc={this.handleAddTextField}
+                                        removeFieldFunc={this.handleRemoveTextField}
+                                    />
                                 </Grid>
                             )
                         }
@@ -258,7 +174,6 @@ class SignalProcessorExec extends React.Component<SignalProcessorExecProps, Sign
                                             onChangeFunc={this.handleChange}
                                         />
                                     </Grid>
-                                    //this.textField(arg.optional as boolean, arg.name as string, arg.type as string)
                                 )
                             }
                             else {

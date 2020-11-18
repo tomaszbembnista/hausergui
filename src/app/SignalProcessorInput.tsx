@@ -5,9 +5,9 @@ interface InputProps {
     optional: boolean;
     error?: boolean;
     operationArgument: OperationArgument;
-    argName: string,
-    argType: string,
-    onChangeFunc: myOnChangeType
+    argName: string;
+    argType: string;
+    onChangeFunc: myOnChangeType;
 }
 
 type myOnChangeType = (argName: string) => (event: React.ChangeEvent<HTMLInputElement>) => void;

@@ -47,7 +47,7 @@ const SignalProcessorListInput = (props: ListInputProps) => {
                         if (arg.name === props.argName) {
                             const index = props.operationArrayArguments.findIndex(i => i.id === arg.id);
                             return (
-                                <>
+                                <div key={"div" + arg.id}>
                                     <TextField
                                         required
                                         error
@@ -68,7 +68,7 @@ const SignalProcessorListInput = (props: ListInputProps) => {
                                     <IconButton disabled={props.operationArrayArguments.length === 1} onClick={() => props.removeFieldFunc(arg.id)}>
                                         <RemoveIcon />
                                     </IconButton>
-                                </>
+                                </div>
                             )
                         }
                     })
@@ -84,7 +84,7 @@ const SignalProcessorListInput = (props: ListInputProps) => {
                         if (arg.name === props.argName) {
                             const index = props.operationArrayArguments.findIndex(i => i.id === arg.id);
                             return (
-                                <>
+                                <div key={"div" + arg.id}>
                                     <TextField
                                         required={!props.optional}
                                         autoFocus
@@ -103,7 +103,7 @@ const SignalProcessorListInput = (props: ListInputProps) => {
                                     <IconButton disabled={props.operationArrayArguments.length === 1} onClick={() => props.removeFieldFunc(arg.id)}>
                                         <RemoveIcon />
                                     </IconButton>
-                                </>
+                                </div>
                             )
                         }
                     })

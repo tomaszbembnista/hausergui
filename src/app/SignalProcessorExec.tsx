@@ -75,8 +75,6 @@ class SignalProcessorExec extends React.Component<SignalProcessorExecProps, Sign
         let fieldsValidation = this.validateFields();
 
         if (fieldsValidation.toSend) {
-            this.setState({ fieldsWithErrors: [] })
-            /*
             let requestParameters: ExecuteSignalProcessorOperationsUsingPUTRequest = {
                 id: this.props.signalProcessorId,
                 name: this.props.operation.name as string,
@@ -85,12 +83,10 @@ class SignalProcessorExec extends React.Component<SignalProcessorExecProps, Sign
 
             let callSignalProcessorApi = new SignalProcessorResourceApi();
             callSignalProcessorApi.executeSignalProcessorOperationsUsingPUT(requestParameters).then((response) => {
-                console.log(response);
-                this.setState({ fieldsWithErrors: []})
+                this.setState({ fieldsWithErrors: [] })
             }).catch((error) => {
                 console.log(error)
             })
-            */
         }
         else {
             this.setState({ fieldsWithErrors: fieldsValidation.errors })
@@ -177,7 +173,7 @@ class SignalProcessorExec extends React.Component<SignalProcessorExecProps, Sign
                                 )
                             }
                             else {
-                                return (<></>)
+                                return (<div key={"empty"}></div>)
                             }
 
                         }

@@ -56,31 +56,27 @@ class SignalProcessorExec extends React.Component<SignalProcessorExecProps, Sign
         this.setState({ operationArguments: newOperationArguments, operationArrayArguments: newOperationArrayArguments });
     }
 
-    /*
+
     validateFields(): { toSend: boolean, errors: string[] } {
         let validation: { toSend: boolean, errors: string[] } = { toSend: true, errors: [] }
 
         this.state.operationArguments.map((opArgs) => {
             this.props.operation.arguments?.map((args) => {
-                if (opArgs.name === args.name) {
-                    if (!args.optional && opArgs.value?.length === 0) {
-                        validation.toSend = false;
-                        validation.errors.push(opArgs.name as string);
-                    }
+                if (opArgs.name === args.name && !args.optional && opArgs.value?.length === 0) {
+                    validation.toSend = false;
+                    validation.errors.push(opArgs.name as string);
                 }
             })
         })
         return validation;
     }
-    */
 
     handleClick() {
-        console.log(this.state.operationArguments);
-        console.log(this.state.operationArrayArguments);
-        /*
         let fieldsValidation = this.validateFields();
 
         if (fieldsValidation.toSend) {
+            this.setState({ fieldsWithErrors: [] })
+            /*
             let requestParameters: ExecuteSignalProcessorOperationsUsingPUTRequest = {
                 id: this.props.signalProcessorId,
                 name: this.props.operation.name as string,
@@ -90,14 +86,15 @@ class SignalProcessorExec extends React.Component<SignalProcessorExecProps, Sign
             let callSignalProcessorApi = new SignalProcessorResourceApi();
             callSignalProcessorApi.executeSignalProcessorOperationsUsingPUT(requestParameters).then((response) => {
                 console.log(response);
+                this.setState({ fieldsWithErrors: []})
             }).catch((error) => {
                 console.log(error)
             })
+            */
         }
         else {
             this.setState({ fieldsWithErrors: fieldsValidation.errors })
         }
-        */
     }
 
     handleChange = (argumentName: string) => (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -146,10 +143,12 @@ class SignalProcessorExec extends React.Component<SignalProcessorExecProps, Sign
             <>
                 {
                     this.props.operation.arguments?.map(arg => {
+                        const fieldError: boolean = this.state.fieldsWithErrors.includes(arg.name as string);
                         if (arg.type?.includes("LIST")) {
                             return (
                                 <Grid item key={arg.name}>
                                     <SignalProcessorListInput
+                                        error={fieldError}
                                         optional={arg.optional as boolean}
                                         argName={arg.name as string}
                                         argType={arg.type as string}
@@ -167,6 +166,7 @@ class SignalProcessorExec extends React.Component<SignalProcessorExecProps, Sign
                                 return (
                                     <Grid item key={arg.name}>
                                         <SignalProcessorInput
+                                            error={fieldError}
                                             optional={arg.optional as boolean}
                                             operationArgument={this.state.operationArguments[opIdx]}
                                             argName={arg.name as string}

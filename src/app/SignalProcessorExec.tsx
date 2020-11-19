@@ -8,6 +8,8 @@ import SignalProcessorOperationInput from './SignalProcessorOperationInput';
 import AddIcon from "@material-ui/icons/Add";
 import RemoveIcon from "@material-ui/icons/Remove";
 import { v4 as uuidv4 } from 'uuid';
+import TbeInput, { TbeInputModel } from './argsEditor/TbeInput';
+import TbeList from './argsEditor/TbeList';
 
 interface SignalProcessorExecProps {
     operation: ProcessorOperationDesc;
@@ -18,6 +20,7 @@ interface SignalProcessorExecState {
     operationArguments: OperationArgument[];
     operationArrayArguments: OperationArrayArgument[];
     fieldsWithErrors: string[];
+    fieldsModels?: TbeInputModel[];
 }
 
 interface OperationArgument {
@@ -49,7 +52,8 @@ class SignalProcessorExec extends React.Component<SignalProcessorExecProps, Sign
         this.state = {
             operationArguments: [],
             operationArrayArguments: [],
-            fieldsWithErrors: []
+            fieldsWithErrors: [],
+            fieldsModels: props.operation.arguments?.map(elem => new TbeInputModel(elem, { name: elem.name }))
         };
     }
 
@@ -268,26 +272,49 @@ class SignalProcessorExec extends React.Component<SignalProcessorExecProps, Sign
 
     render() {
         return (
-            <Grid
-                container
-                direction="column"
-                justify="center"
-                alignItems="stretch"
-            >
-                {
-                    this.props.operation.arguments?.map(arg => (
-                        <Grid item key={arg.name}>
-                            {
-                                arg.type?.includes("LIST") ?
-                                    this.textFieldList(arg.optional as boolean, arg.name as string, arg.type as string)
-                                    :
-                                    this.textField(arg.optional as boolean, arg.name as string, arg.type as string)
-                            }
-                        </Grid>
-                    ))
-                }
-                <Button onClick={() => this.handleClick()}>Change</Button>
-            </Grid>
+            <div>
+                <Grid
+                    container
+                    direction="column"
+                    justify="center"
+                    alignItems="stretch"
+                >
+                    {
+                        this.props.operation.arguments?.map(arg => (
+                            <Grid item key={arg.name}>
+                                {
+                                    arg.type?.includes("LIST") ?
+                                        this.textFieldList(arg.optional as boolean, arg.name as string, arg.type as string)
+                                        :
+                                        this.textField(arg.optional as boolean, arg.name as string, arg.type as string)
+                                }
+                            </Grid>
+                        ))
+
+
+
+                    }
+                    <Button onClick={() => this.handleClick()}>Change</Button>
+                </Grid>
+
+                <Grid
+                    container
+                    direction="column"
+                    justify="center"
+                    alignItems="stretch"
+                >
+                    {
+                        this.state.fieldsModels?.map(arg => (
+                            arg.operationDesc.type?.includes("LIST") ?
+                                <TbeList model={arg}></TbeList>
+                                :
+                                <TbeInput model={arg}></TbeInput>
+                        ))
+                    }
+                    <Button onClick={() => this.handleClick()}>Change TBE</Button>
+                </Grid>
+
+            </div >
         )
     }
 }

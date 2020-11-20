@@ -7,7 +7,7 @@ import TbeInput, { TbeInputProps, TbeInputState, TbeInputModel } from "./TbeInpu
 import AddIcon from "@material-ui/icons/Add";
 import RemoveIcon from "@material-ui/icons/Remove";
 import { ProcessorOperationArgumentDesc, ProcessorOperationArgumentDescTypeEnum } from "../srvapi";
-
+import { v4 as uuidv4 } from 'uuid';
 
 interface TbeListState {
     elements: TbeInputModel[]
@@ -20,7 +20,6 @@ class TbeList extends React.Component<TbeInputProps, TbeListState> {
             elements: []
         };
     }
-    //sfsdf
 
     private addNewElement(): void {
         var elementToAdd: TbeInputModel = this.createSimpleModelFromListModel(this.props.model);
@@ -44,7 +43,7 @@ class TbeList extends React.Component<TbeInputProps, TbeListState> {
         var operationArgDesc: ProcessorOperationArgumentDesc = { ...listModel.operationDesc };
         operationArgDesc.type = ProcessorOperationArgumentDescTypeEnum.INT; // to change
         var operationArg: { name: string, value: string } = { name: operationArgDesc.name as string, value: "" };
-        var result = new TbeInputModel(operationArgDesc, operationArg);
+        var result = new TbeInputModel(operationArgDesc, operationArg, this.props.model.onChangeFunction);
         return result;
     }
 
@@ -59,7 +58,7 @@ class TbeList extends React.Component<TbeInputProps, TbeListState> {
                 </div>
                 {
                     this.state.elements.map(elem => (
-                        <div style={{ flexDirection: "row", display: "flex", alignItems: "flex-end" }}>
+                        <div style={{ flexDirection: "row", display: "flex", alignItems: "flex-end" }} key={`div${uuidv4()}`}>
                             <TbeInput model={elem}> </TbeInput>
                             <IconButton onClick={() => this.removeElement(elem)}>
                                 <RemoveIcon />

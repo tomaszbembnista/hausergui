@@ -4,14 +4,18 @@ import {
     withStyles, TextField
 } from "@material-ui/core";
 import styles from "../Styles";
+import { v4 as uuidv4 } from 'uuid';
 
 export interface TbeInputProps {
     model: TbeInputModel;
 }
 
-export class TbeInputModel {
+type onChangeFunctionType = (fieldModel: TbeInputModel) => (event: React.ChangeEvent<HTMLInputElement>) => void;
 
-    constructor(public operationDesc: ProcessorOperationArgumentDesc, public operationArg: { name: string, value: string }) { };
+export class TbeInputModel {
+    private id: string = uuidv4();
+
+    constructor(public operationDesc: ProcessorOperationArgumentDesc, public operationArg: { name: string, value: string }, public onChangeFunction: onChangeFunctionType) { };
 
     public get modelValue(): string | undefined {
         return this.operationArg.value;
@@ -19,6 +23,10 @@ export class TbeInputModel {
 
     public setModelValue(value: string) {
         this.operationArg.value = value;
+    }
+
+    public get uuid(): string {
+        return this.id;
     }
 
     public get type(): string {
@@ -61,7 +69,7 @@ class TbeInput extends React.Component<TbeInputProps, TbeInputState> {
     constructor(props: TbeInputProps) {
         super(props);
         this.state = {
-            model: props.model
+            model: props.model,
         };
         console.log("Constructor called");
     }
@@ -81,6 +89,7 @@ class TbeInput extends React.Component<TbeInputProps, TbeInputState> {
     public setModelValue(event: React.ChangeEvent<HTMLInputElement>) {
         this.state.model.setModelValue(event.target.value);
         this.setState({ model: this.state.model }); //do this to rerend GUI in order to change error state
+        this.state.model.onChangeFunction(this.state.model); // doesn't work
     }
 
     render() {
@@ -90,6 +99,7 @@ class TbeInput extends React.Component<TbeInputProps, TbeInputState> {
                 error={this.state.model.hasError}
                 autoFocus
                 margin="dense"
+                key={this.state.model.uuid}
                 label={this.state.model.operationDesc.name}
                 onChange={this.setModelValue.bind(this)}
                 type={this.state.model.type}

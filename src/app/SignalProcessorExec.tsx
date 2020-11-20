@@ -3,11 +3,7 @@ import {
     ExecuteSignalProcessorOperationsUsingPUTRequest, ProcessorOperationArgument,
     ProcessorOperationArgumentDescFromJSON, ProcessorOperationDesc, SignalProcessorResourceApi
 } from './srvapi';
-import { TextField, Button, Grid, IconButton } from "@material-ui/core";
-import SignalProcessorOperationInput from './SignalProcessorOperationInput';
-import AddIcon from "@material-ui/icons/Add";
-import RemoveIcon from "@material-ui/icons/Remove";
-import { v4 as uuidv4 } from 'uuid';
+import { Button, Grid } from "@material-ui/core";
 import TbeInput, { TbeInputModel } from './argsEditor/TbeInput';
 import TbeList from './argsEditor/TbeList';
 
@@ -17,62 +13,16 @@ interface SignalProcessorExecProps {
 }
 
 interface SignalProcessorExecState {
-    operationArguments: OperationArgument[];
-    operationArrayArguments: OperationArrayArgument[];
-    fieldsWithErrors: string[];
     fieldsModels?: TbeInputModel[];
-}
-
-interface OperationArgument {
-    name: string;
-    value: string;
-}
-
-interface OperationArrayArgument {
-    id: string;
-    name: string;
-    value: string;
-}
-
-enum FieldType {
-    FLOAT = 'number',
-    INT = 'number',
-    STRING = 'string',
-    DATE = 'date',
-    FLOATLIST = 'number[]',
-    INTLIST = 'number[]',
-    STRINGLIST = 'string[]',
-    DATELIST = 'date[]',
-    VOID = 'void'
 }
 
 class SignalProcessorExec extends React.Component<SignalProcessorExecProps, SignalProcessorExecState> {
     constructor(props: SignalProcessorExecProps) {
         super(props);
         this.state = {
-            operationArguments: [],
-            operationArrayArguments: [],
-            fieldsWithErrors: [],
-            fieldsModels: props.operation.arguments?.map(elem => new TbeInputModel(elem, { name: elem.name as string, value: "" }))
+            fieldsModels: props.operation.arguments?.map(elem => new TbeInputModel(elem, { name: elem.name as string, value: "" }, this.handleChange.bind(this)))
         };
     }
-
-    componentDidMount() {
-        let newOperationArguments: OperationArgument[] = [];
-        let newOperationArrayArguments: OperationArrayArgument[] = [];
-
-        this.props.operation.arguments?.map((arg) => {
-            if (arg.type?.includes("LIST")) {
-                newOperationArrayArguments.push({ id: uuidv4(), name: arg.name as string, value: "" });
-            }
-            else {
-                newOperationArguments.push({ name: arg.name as string, value: "" });
-            }
-        });
-
-        this.setState({ operationArguments: newOperationArguments, operationArrayArguments: newOperationArrayArguments });
-    }
-
 
     validateFields(): { toSend: boolean, errors: string[] } {
         let validation: { toSend: boolean, errors: string[] } = { toSend: true, errors: [] }
@@ -91,8 +41,6 @@ class SignalProcessorExec extends React.Component<SignalProcessorExecProps, Sign
     }
 
     handleClick() {
-        console.log(this.state.operationArguments);
-        console.log(this.state.operationArrayArguments);
         /*
         let fieldsValidation = this.validateFields();
 
@@ -116,25 +64,11 @@ class SignalProcessorExec extends React.Component<SignalProcessorExecProps, Sign
         */
     }
 
-    handleChange = (argumentName: string) => (event: React.ChangeEvent<HTMLInputElement>) => {
-        let arrCopy = this.state.operationArguments;
-
-        const arrArgIndex = this.state.operationArguments.findIndex(arg => arg.name === argumentName);
-
-        arrCopy[arrArgIndex] = { name: argumentName, value: event.target.value };
-
-        this.setState({ operationArguments: arrCopy });
+    handleChange = (fieldModel: TbeInputModel) => (event: React.ChangeEvent<HTMLInputElement>) => {
+        console.log(`parent component
+        ${fieldModel}
+        `);
     };
-
-    handleChangeList = (argumentId: string, argumentName: string) => (event: React.ChangeEvent<HTMLInputElement>): void => {
-        let arrCopy = this.state.operationArrayArguments;
-
-        const arrArgIndex = this.state.operationArrayArguments.findIndex(arg => arg.id === argumentId);
-
-        arrCopy[arrArgIndex] = { id: argumentId, name: argumentName, value: event.target.value };
-
-        this.setState({ operationArrayArguments: arrCopy });
-    }
 
     render() {
         return (

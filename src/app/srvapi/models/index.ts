@@ -8,4 +8,4 @@ export * from './ProcessorOperationDesc';
 export * from './SignalProcessorDTO';
 export * from './SpaceDTO';
 export * from './StringWrapper';
-export * from './view';
+export * from './View';

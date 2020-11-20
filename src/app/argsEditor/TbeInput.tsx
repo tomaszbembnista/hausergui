@@ -1,5 +1,5 @@
 import React from "react";
-import { ProcessorOperationArgumentDesc, ProcessorOperationArgument, ProcessorOperationArgumentDescTypeEnum } from "../srvapi";
+import { ProcessorOperationArgumentDesc, ProcessorOperationArgumentDescTypeEnum } from "../srvapi";
 import {
     withStyles, TextField
 } from "@material-ui/core";
@@ -11,7 +11,7 @@ export interface TbeInputProps {
 
 export class TbeInputModel {
 
-    constructor(public operationDesc: ProcessorOperationArgumentDesc, public operationArg: ProcessorOperationArgument) { };
+    constructor(public operationDesc: ProcessorOperationArgumentDesc, public operationArg: { name: string, value: string }) { };
 
     public get modelValue(): string | undefined {
         return this.operationArg.value;
@@ -59,11 +59,11 @@ export interface TbeInputState {
 
 class TbeInput extends React.Component<TbeInputProps, TbeInputState> {
     constructor(props: TbeInputProps) {
-        console.log("Constructor called");
         super(props);
         this.state = {
             model: props.model
         };
+        console.log("Constructor called");
     }
 
     componentDidMount() {

@@ -14,11 +14,6 @@
 
 
 import * as runtime from '../runtime';
-import {
-    ModelAndView,
-    ModelAndViewFromJSON,
-    ModelAndViewToJSON,
-} from '../models';
 
 /**
  * 
@@ -26,9 +21,9 @@ import {
 export class BasicErrorControllerApi extends runtime.BaseAPI {
 
     /**
-     * errorHtml
+     * error
      */
-    async errorHtmlUsingDELETERaw(): Promise<runtime.ApiResponse<ModelAndView>> {
+    async errorUsingDELETERaw(): Promise<runtime.ApiResponse<{ [key: string]: object; }>> {
         const queryParameters: runtime.HTTPQuery = {};
 
         const headerParameters: runtime.HTTPHeaders = {};
@@ -40,21 +35,21 @@ export class BasicErrorControllerApi extends runtime.BaseAPI {
             query: queryParameters,
         });
 
-        return new runtime.JSONApiResponse(response, (jsonValue) => ModelAndViewFromJSON(jsonValue));
+        return new runtime.JSONApiResponse<any>(response);
     }
 
     /**
-     * errorHtml
+     * error
      */
-    async errorHtmlUsingDELETE(): Promise<ModelAndView> {
-        const response = await this.errorHtmlUsingDELETERaw();
+    async errorUsingDELETE(): Promise<{ [key: string]: object; }> {
+        const response = await this.errorUsingDELETERaw();
         return await response.value();
     }
 
     /**
-     * errorHtml
+     * error
      */
-    async errorHtmlUsingGETRaw(): Promise<runtime.ApiResponse<ModelAndView>> {
+    async errorUsingGETRaw(): Promise<runtime.ApiResponse<{ [key: string]: object; }>> {
         const queryParameters: runtime.HTTPQuery = {};
 
         const headerParameters: runtime.HTTPHeaders = {};
@@ -66,21 +61,21 @@ export class BasicErrorControllerApi extends runtime.BaseAPI {
             query: queryParameters,
         });
 
-        return new runtime.JSONApiResponse(response, (jsonValue) => ModelAndViewFromJSON(jsonValue));
+        return new runtime.JSONApiResponse<any>(response);
     }
 
     /**
-     * errorHtml
+     * error
      */
-    async errorHtmlUsingGET(): Promise<ModelAndView> {
-        const response = await this.errorHtmlUsingGETRaw();
+    async errorUsingGET(): Promise<{ [key: string]: object; }> {
+        const response = await this.errorUsingGETRaw();
         return await response.value();
     }
 
     /**
-     * errorHtml
+     * error
      */
-    async errorHtmlUsingHEADRaw(): Promise<runtime.ApiResponse<ModelAndView>> {
+    async errorUsingHEADRaw(): Promise<runtime.ApiResponse<{ [key: string]: object; }>> {
         const queryParameters: runtime.HTTPQuery = {};
 
         const headerParameters: runtime.HTTPHeaders = {};
@@ -92,21 +87,21 @@ export class BasicErrorControllerApi extends runtime.BaseAPI {
             query: queryParameters,
         });
 
-        return new runtime.JSONApiResponse(response, (jsonValue) => ModelAndViewFromJSON(jsonValue));
+        return new runtime.JSONApiResponse<any>(response);
     }
 
     /**
-     * errorHtml
+     * error
      */
-    async errorHtmlUsingHEAD(): Promise<ModelAndView> {
-        const response = await this.errorHtmlUsingHEADRaw();
+    async errorUsingHEAD(): Promise<{ [key: string]: object; }> {
+        const response = await this.errorUsingHEADRaw();
         return await response.value();
     }
 
     /**
-     * errorHtml
+     * error
      */
-    async errorHtmlUsingOPTIONSRaw(): Promise<runtime.ApiResponse<ModelAndView>> {
+    async errorUsingOPTIONSRaw(): Promise<runtime.ApiResponse<{ [key: string]: object; }>> {
         const queryParameters: runtime.HTTPQuery = {};
 
         const headerParameters: runtime.HTTPHeaders = {};
@@ -118,21 +113,21 @@ export class BasicErrorControllerApi extends runtime.BaseAPI {
             query: queryParameters,
         });
 
-        return new runtime.JSONApiResponse(response, (jsonValue) => ModelAndViewFromJSON(jsonValue));
+        return new runtime.JSONApiResponse<any>(response);
     }
 
     /**
-     * errorHtml
+     * error
      */
-    async errorHtmlUsingOPTIONS(): Promise<ModelAndView> {
-        const response = await this.errorHtmlUsingOPTIONSRaw();
+    async errorUsingOPTIONS(): Promise<{ [key: string]: object; }> {
+        const response = await this.errorUsingOPTIONSRaw();
         return await response.value();
     }
 
     /**
-     * errorHtml
+     * error
      */
-    async errorHtmlUsingPATCHRaw(): Promise<runtime.ApiResponse<ModelAndView>> {
+    async errorUsingPATCHRaw(): Promise<runtime.ApiResponse<{ [key: string]: object; }>> {
         const queryParameters: runtime.HTTPQuery = {};
 
         const headerParameters: runtime.HTTPHeaders = {};
@@ -144,21 +139,21 @@ export class BasicErrorControllerApi extends runtime.BaseAPI {
             query: queryParameters,
         });
 
-        return new runtime.JSONApiResponse(response, (jsonValue) => ModelAndViewFromJSON(jsonValue));
+        return new runtime.JSONApiResponse<any>(response);
     }
 
     /**
-     * errorHtml
+     * error
      */
-    async errorHtmlUsingPATCH(): Promise<ModelAndView> {
-        const response = await this.errorHtmlUsingPATCHRaw();
+    async errorUsingPATCH(): Promise<{ [key: string]: object; }> {
+        const response = await this.errorUsingPATCHRaw();
         return await response.value();
     }
 
     /**
-     * errorHtml
+     * error
      */
-    async errorHtmlUsingPOSTRaw(): Promise<runtime.ApiResponse<ModelAndView>> {
+    async errorUsingPOSTRaw(): Promise<runtime.ApiResponse<{ [key: string]: object; }>> {
         const queryParameters: runtime.HTTPQuery = {};
 
         const headerParameters: runtime.HTTPHeaders = {};
@@ -170,21 +165,21 @@ export class BasicErrorControllerApi extends runtime.BaseAPI {
             query: queryParameters,
         });
 
-        return new runtime.JSONApiResponse(response, (jsonValue) => ModelAndViewFromJSON(jsonValue));
+        return new runtime.JSONApiResponse<any>(response);
     }
 
     /**
-     * errorHtml
+     * error
      */
-    async errorHtmlUsingPOST(): Promise<ModelAndView> {
-        const response = await this.errorHtmlUsingPOSTRaw();
+    async errorUsingPOST(): Promise<{ [key: string]: object; }> {
+        const response = await this.errorUsingPOSTRaw();
         return await response.value();
     }
 
     /**
-     * errorHtml
+     * error
      */
-    async errorHtmlUsingPUTRaw(): Promise<runtime.ApiResponse<ModelAndView>> {
+    async errorUsingPUTRaw(): Promise<runtime.ApiResponse<{ [key: string]: object; }>> {
         const queryParameters: runtime.HTTPQuery = {};
 
         const headerParameters: runtime.HTTPHeaders = {};
@@ -196,14 +191,14 @@ export class BasicErrorControllerApi extends runtime.BaseAPI {
             query: queryParameters,
         });
 
-        return new runtime.JSONApiResponse(response, (jsonValue) => ModelAndViewFromJSON(jsonValue));
+        return new runtime.JSONApiResponse<any>(response);
     }
 
     /**
-     * errorHtml
+     * error
      */
-    async errorHtmlUsingPUT(): Promise<ModelAndView> {
-        const response = await this.errorHtmlUsingPUTRaw();
+    async errorUsingPUT(): Promise<{ [key: string]: object; }> {
+        const response = await this.errorUsingPUTRaw();
         return await response.value();
     }
 

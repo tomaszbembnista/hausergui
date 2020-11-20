@@ -6,7 +6,7 @@ import styles from "../Styles";
 import TbeInput, { TbeInputProps, TbeInputState, TbeInputModel } from "./TbeInput"
 import AddIcon from "@material-ui/icons/Add";
 import RemoveIcon from "@material-ui/icons/Remove";
-import { ProcessorOperationArgument, ProcessorOperationArgumentDesc, ProcessorOperationArgumentDescTypeEnum } from "../srvapi";
+import { ProcessorOperationArgumentDesc, ProcessorOperationArgumentDescTypeEnum } from "../srvapi";
 
 
 interface TbeListState {
@@ -42,8 +42,8 @@ class TbeList extends React.Component<TbeInputProps, TbeListState> {
 
     private createSimpleModelFromListModel(listModel: TbeInputModel): TbeInputModel {
         var operationArgDesc: ProcessorOperationArgumentDesc = { ...listModel.operationDesc };
-        operationArgDesc.type = ProcessorOperationArgumentDescTypeEnum.INT;
-        var operationArg: ProcessorOperationArgument = {};
+        operationArgDesc.type = ProcessorOperationArgumentDescTypeEnum.INT; // to change
+        var operationArg: { name: string, value: string } = { name: operationArgDesc.name as string, value: "" };
         var result = new TbeInputModel(operationArgDesc, operationArg);
         return result;
     }

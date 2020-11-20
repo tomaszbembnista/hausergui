@@ -75,10 +75,29 @@ class SignalProcessorExec extends React.Component<SignalProcessorExecProps, Sign
         let fieldsValidation = this.validateFields();
 
         if (fieldsValidation.toSend) {
+            let arrayArgumentsArray: { name: string, value: string }[] = [];
+
+            if (this.state.operationArrayArguments.length > 0) {
+                let arrayArguments: Map<string, string[]> = new Map();
+                for (let elem of this.state.operationArrayArguments) {
+                    if (arrayArguments.has(elem.name)) {
+                        arrayArguments.get(elem.name)?.push(elem.value);
+                    }
+                    else {
+                        arrayArguments.set(elem.name, [elem.value]);
+                    }
+                }
+
+                for (let [key, val] of arrayArguments.entries()) {
+                    const valueStringified = JSON.stringify({ values: val });
+                    arrayArgumentsArray.push({ name: key, value: valueStringified })
+                }
+            }
+
             let requestParameters: ExecuteSignalProcessorOperationsUsingPUTRequest = {
                 id: this.props.signalProcessorId,
                 name: this.props.operation.name as string,
-                operationArguments: this.state.operationArguments
+                operationArguments: [...this.state.operationArguments, ...arrayArgumentsArray]
             };
 
             let callSignalProcessorApi = new SignalProcessorResourceApi();
